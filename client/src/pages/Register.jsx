@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import axios from 'axios';
+import { AuthContext } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const Register = () => {
   const [form, setForm] = useState({
@@ -11,6 +13,14 @@ const Register = () => {
     bio: '',
   });
   const [message, setMessage] = useState('');
+  const { user, register, login } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user) {
+      navigate('/');
+    }
+  }, [user, navigate]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -19,10 +29,12 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('/api/auth/register', form);
-      setMessage('Registration successful!');
+      await register(form);
+      await login(form.email, form.password);
+      setMessage('Registration successful! Logging you in...');
+      // navigation will happen via useEffect
     } catch (err) {
-      setMessage(err.response?.data?.message || 'Registration failed');
+      setMessage('Registration failed');
     }
   };
 
@@ -45,7 +57,7 @@ const Register = () => {
         )}
         <button type="submit" className="w-full bg-blue-600 text-white p-2 rounded">Register</button>
       </form>
-      {message && <p className="mt-4 text-center text-red-500">{message}</p>}
+      {message && <p className="mt-4 text-center text-green-600">{message}</p>}
     </div>
   );
 };

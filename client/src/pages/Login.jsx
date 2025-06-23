@@ -1,9 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import axios from 'axios';
+import { AuthContext } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const [form, setForm] = useState({ email: '', password: '' });
   const [message, setMessage] = useState('');
+  const { user, login } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user) {
+      navigate('/');
+    }
+  }, [user, navigate]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -12,12 +22,11 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('/api/auth/login', form);
-      localStorage.setItem('token', res.data.token);
+      await login(form.email, form.password);
       setMessage('Login successful!');
-      // Optionally redirect or update app state here
+      // navigation will happen via useEffect
     } catch (err) {
-      setMessage(err.response?.data?.message || 'Login failed');
+      setMessage('Login failed');
     }
   };
 
