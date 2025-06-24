@@ -9,6 +9,10 @@ const UserSchema = new mongoose.Schema({
   skill: { type: String }, // Only for workers
   bio: { type: String },   // Only for workers
   profilePic: { type: String }, // base64 or URL
+  organizationType: { type: String }, // e.g., Business, Individual, Nonprofit, etc.
+  organizationName: { type: String }, // For clients (organizations/individuals)
+  location: { type: String }, // For both workers and clients
+  description: { type: String },
 }, { timestamps: true });
 
 module.exports = mongoose.model('User', UserSchema); 

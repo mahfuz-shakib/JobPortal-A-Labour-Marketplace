@@ -3,10 +3,14 @@ const bcrypt = require('bcryptjs');
 
 exports.updateProfile = async (req, res) => {
   try {
-    // Accept all updatable fields, including profilePic
-    const { name, phone, skill, bio, profilePic } = req.body;
+    // Accept all updatable fields, including profilePic and organization info
+    const { name, phone, skill, bio, profilePic, organizationType, organizationName, location, description } = req.body;
     const updateFields = { name, phone, skill, bio };
     if (profilePic !== undefined) updateFields.profilePic = profilePic;
+    if (organizationType !== undefined) updateFields.organizationType = organizationType;
+    if (organizationName !== undefined) updateFields.organizationName = organizationName;
+    if (location !== undefined) updateFields.location = location;
+    if (description !== undefined) updateFields.description = description;
     const user = await User.findByIdAndUpdate(
       req.user.id,
       updateFields,
@@ -49,6 +53,11 @@ exports.changePassword = async (req, res) => {
 
 exports.deleteAccount = async (req, res) => {
   try {
+    const { currentPassword } = req.body;
+    if (!currentPassword) return res.status(400).json({ message: 'Current password required.' });
+    const user = await User.findById(req.user.id);
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) return res.status(400).json({ message: 'Current password is incorrect.' });
     await User.findByIdAndDelete(req.user.id);
     res.json({ message: 'Account deleted' });
   } catch (err) {
