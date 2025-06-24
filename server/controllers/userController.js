@@ -1,14 +1,56 @@
 const User = require('../models/User');
+const bcrypt = require('bcryptjs');
 
 exports.updateProfile = async (req, res) => {
   try {
-    const { name, email, skill, bio } = req.body;
+    // Accept all updatable fields, including profilePic
+    const { name, phone, skill, bio, profilePic } = req.body;
+    const updateFields = { name, phone, skill, bio };
+    if (profilePic !== undefined) updateFields.profilePic = profilePic;
     const user = await User.findByIdAndUpdate(
       req.user.id,
-      { name, email, skill, bio },
+      updateFields,
       { new: true }
     );
     res.json({ user });
+  } catch (err) {
+    console.error('Profile update error:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.changeEmail = async (req, res) => {
+  try {
+    const { newEmail } = req.body;
+    if (!newEmail) return res.status(400).json({ message: 'New email required.' });
+    const existing = await User.findOne({ email: newEmail });
+    if (existing) return res.status(400).json({ message: 'Email already exists' });
+    const user = await User.findByIdAndUpdate(req.user.id, { email: newEmail }, { new: true });
+    res.json({ user });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.changePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    if (!currentPassword || !newPassword) return res.status(400).json({ message: 'Both current and new password required.' });
+    const user = await User.findById(req.user.id);
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) return res.status(400).json({ message: 'Current password is incorrect.' });
+    user.password = await bcrypt.hash(newPassword, 10);
+    await user.save();
+    res.json({ message: 'Password updated' });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.deleteAccount = async (req, res) => {
+  try {
+    await User.findByIdAndDelete(req.user.id);
+    res.json({ message: 'Account deleted' });
   } catch (err) {
     res.status(500).json({ message: 'Server error' });
   }

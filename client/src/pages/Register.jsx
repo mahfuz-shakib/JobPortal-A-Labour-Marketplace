@@ -8,6 +8,7 @@ const Register = () => {
     name: '',
     email: '',
     password: '',
+    phone: '',
     role: 'client',
     skill: '',
     bio: '',
@@ -28,11 +29,14 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!/^\+?\d{10,15}$/.test(form.phone)) {
+      setMessage('Please enter a valid phone number.');
+      return;
+    }
     try {
       await register(form);
       await login(form.email, form.password);
       setMessage('Registration successful! Logging you in...');
-      // navigation will happen via useEffect
     } catch (err) {
       setMessage('Registration failed');
     }
@@ -44,6 +48,7 @@ const Register = () => {
       <form onSubmit={handleSubmit} className="space-y-4">
         <input name="name" value={form.name} onChange={handleChange} placeholder="Name" className="w-full p-2 border rounded" required />
         <input name="email" value={form.email} onChange={handleChange} placeholder="Email" type="email" className="w-full p-2 border rounded" required />
+        <input name="phone" value={form.phone} onChange={handleChange} placeholder="Phone Number" className="w-full p-2 border rounded" required />
         <input name="password" value={form.password} onChange={handleChange} placeholder="Password" type="password" className="w-full p-2 border rounded" required />
         <select name="role" value={form.role} onChange={handleChange} className="w-full p-2 border rounded">
           <option value="client">Client</option>
@@ -57,7 +62,7 @@ const Register = () => {
         )}
         <button type="submit" className="w-full bg-blue-600 text-white p-2 rounded">Register</button>
       </form>
-      {message && <p className="mt-4 text-center text-green-600">{message}</p>}
+      {message && <p className="mt-4 text-center text-red-500">{message}</p>}
     </div>
   );
 };

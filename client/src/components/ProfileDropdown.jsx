@@ -31,11 +31,15 @@ const ProfileDropdown = () => {
   return (
     <div className="relative" ref={ref}>
       <button
-        className="w-10 h-10 rounded-full bg-blue-800 flex items-center justify-center text-white font-bold focus:outline-none"
+        className="w-10 h-10 rounded-full bg-blue-800 flex items-center justify-center text-white font-bold focus:outline-none overflow-hidden"
         onClick={() => setOpen(!open)}
         aria-label="Profile menu"
       >
-        {initials}
+        {user.profilePic ? (
+          <img src={user.profilePic} alt="Profile" className="w-10 h-10 object-cover rounded-full" />
+        ) : (
+          initials
+        )}
       </button>
       {open && (
         <div className="absolute right-0 mt-2 w-48 bg-white rounded shadow-lg z-50">
