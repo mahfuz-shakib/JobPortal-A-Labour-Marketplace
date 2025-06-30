@@ -21,8 +21,6 @@ const JobDetails = () => {
   const [saving, setSaving] = useState(false);
   const [editMessage, setEditMessage] = useState('');
   const [showBidForm, setShowBidForm] = useState(false);
-  const [selectedWorker, setSelectedWorker] = useState(null);
-  const [showWorkerModal, setShowWorkerModal] = useState(false);
 
   const workCategories = [
     'Cooking/Catering',
@@ -166,23 +164,6 @@ const JobDetails = () => {
     return new Date(dateString).toLocaleDateString();
   };
 
-  const showWorkerProfile = (worker) => {
-    setSelectedWorker(worker);
-    setShowWorkerModal(true);
-  };
-
-  const getRatingStars = (rating) => {
-    const stars = [];
-    for (let i = 1; i <= 5; i++) {
-      stars.push(
-        <span key={i} className={i <= rating ? 'text-yellow-400' : 'text-gray-300'}>
-          ★
-        </span>
-      );
-    }
-    return stars;
-  };
-
   if (loading) return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
       <div className="text-center">
@@ -315,20 +296,11 @@ const JobDetails = () => {
                       <div className="flex-1">
                         <div 
                           className="text-gray-900 font-semibold text-sm cursor-pointer hover:text-blue-600 transition"
-                          onClick={() => showWorkerProfile(worker)}
+                          onClick={() => navigate(`/worker/${worker._id}`)}
                         >
                           {worker.name}
                         </div>
                         <div className="text-gray-600 text-xs">{worker.email}</div>
-                        <div className="flex items-center gap-2 mt-1">
-                          <div className="flex items-center gap-1">
-                            {getRatingStars(worker.rating || 0)}
-                            <span className="text-gray-500 text-xs">({worker.rating || 0})</span>
-                          </div>
-                          {worker.phone && (
-                            <span className="text-gray-500 text-xs">📞 {worker.phone}</span>
-                          )}
-                        </div>
                       </div>
                       <div className="flex gap-2">
                         {worker.phone && (
@@ -777,119 +749,6 @@ const JobDetails = () => {
                 >
                   Cancel
                 </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Worker Profile Modal */}
-        {showWorkerModal && selectedWorker && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-            <div className="bg-white rounded-lg shadow-xl p-8 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">Worker Profile</h2>
-                <button
-                  onClick={() => setShowWorkerModal(false)}
-                  className="text-gray-400 hover:text-gray-600 text-2xl font-bold"
-                >
-                  ×
-                </button>
-              </div>
-              
-              <div className="space-y-6">
-                {/* Worker Header */}
-                <div className="flex items-center gap-4">
-                  {selectedWorker.profilePic ? (
-                    <img 
-                      src={selectedWorker.profilePic} 
-                      alt="Profile" 
-                      className="w-16 h-16 rounded-full object-cover border-2 border-blue-200"
-                    />
-                  ) : (
-                    <div className="w-16 h-16 rounded-full bg-blue-600 flex items-center justify-center text-xl font-bold text-white">
-                      {selectedWorker.name?.charAt(0)?.toUpperCase() || 'W'}
-                    </div>
-                  )}
-                  <div>
-                    <h3 className="text-xl font-bold text-gray-900">{selectedWorker.name}</h3>
-                    <div className="flex items-center gap-2 mt-1">
-                      {getRatingStars(selectedWorker.rating || 0)}
-                      <span className="text-gray-500 text-sm">({selectedWorker.rating || 0})</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Contact Information */}
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <h4 className="text-lg font-semibold text-gray-900 mb-3">Contact Information</h4>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex items-center gap-2 text-gray-600">
-                      <span className="text-gray-500 font-medium">Email:</span>
-                      <span className="text-gray-900">{selectedWorker.email}</span>
-                    </div>
-                    {selectedWorker.phone && (
-                      <div className="flex items-center gap-2 text-gray-600">
-                        <span className="text-gray-500 font-medium">Phone:</span>
-                        <span className="text-gray-900">{selectedWorker.phone}</span>
-                      </div>
-                    )}
-                    {selectedWorker.location && (
-                      <div className="flex items-center gap-2 text-gray-600">
-                        <span className="text-gray-500 font-medium">Location:</span>
-                        <span className="text-gray-900">{selectedWorker.location}</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Experience & Skills */}
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <h4 className="text-lg font-semibold text-gray-900 mb-3">Experience & Skills</h4>
-                  <div className="space-y-3 text-sm">
-                    {selectedWorker.experience && (
-                      <div>
-                        <span className="text-gray-500 font-medium">Experience:</span>
-                        <p className="text-gray-900 mt-1">{selectedWorker.experience}</p>
-                      </div>
-                    )}
-                    {selectedWorker.category && selectedWorker.category.length > 0 && (
-                      <div>
-                        <span className="text-gray-500 font-medium">Skills:</span>
-                        <div className="flex flex-wrap gap-2 mt-1">
-                          {selectedWorker.category.map((skill, index) => (
-                            <span key={index} className="bg-blue-600 text-white px-2 py-1 rounded text-xs">
-                              {skill}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                    {selectedWorker.bio && (
-                      <div>
-                        <span className="text-gray-500 font-medium">Bio:</span>
-                        <p className="text-gray-900 mt-1">{selectedWorker.bio}</p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Contact Actions */}
-                <div className="flex gap-3 pt-4">
-                  {selectedWorker.phone && (
-                    <a
-                      href={`tel:${selectedWorker.phone}`}
-                      className="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg transition text-center"
-                    >
-                      📞 Call Worker
-                    </a>
-                  )}
-                  <a
-                    href={`mailto:${selectedWorker.email}`}
-                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition text-center"
-                  >
-                    ✉️ Send Email
-                  </a>
-                </div>
               </div>
             </div>
           </div>

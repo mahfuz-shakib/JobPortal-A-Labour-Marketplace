@@ -22,5 +22,7 @@ router.delete('/:id', authMiddleware, jobController.deleteJob);
 
 // Update job status (client/worker)
 router.patch('/:id/status', authMiddleware, jobController.updateJobStatus);
+// Worker updates their job status (start work, update progress, complete)
+router.patch('/:id/worker-status', authMiddleware, jobController.updateWorkerJobStatus);
 
 module.exports = router; 

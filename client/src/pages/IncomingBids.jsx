@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 
 const IncomingBids = () => {
   const { user } = useContext(AuthContext);
@@ -10,8 +10,9 @@ const IncomingBids = () => {
   const [job, setJob] = useState(null);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState('');
-  const [selectedWorker, setSelectedWorker] = useState(null);
-  const [showWorkerModal, setShowWorkerModal] = useState(false);
+  const [selectedProposal, setSelectedProposal] = useState(null);
+  const [showProposalModal, setShowProposalModal] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchBids = async () => {
@@ -77,9 +78,13 @@ const IncomingBids = () => {
     }
   };
 
-  const showWorkerProfile = (worker) => {
-    setSelectedWorker(worker);
-    setShowWorkerModal(true);
+  const showProposal = (proposal) => {
+    setSelectedProposal(proposal);
+    setShowProposalModal(true);
+  };
+
+  const viewWorkerProfile = (workerId) => {
+    navigate(`/worker/${workerId}`);
   };
 
   const formatDate = (dateString) => {
@@ -174,8 +179,8 @@ const IncomingBids = () => {
               <div className="grid grid-cols-6 gap-4 text-sm font-semibold text-gray-300">
                 <div>Worker</div>
                 <div>Bid Amount</div>
-                <div>Experience & Rating</div>
-                <div>Contact</div>
+                <div>Rating</div>
+                <div>Proposal</div>
                 <div>Submitted</div>
                 <div>Actions</div>
               </div>
@@ -194,7 +199,7 @@ const IncomingBids = () => {
                         </div>
                         <div>
                           <div className="text-white font-semibold text-sm cursor-pointer hover:text-blue-300 transition" 
-                               onClick={() => showWorkerProfile(bid.worker)}>
+                               onClick={() => viewWorkerProfile(bid.worker._id)}>
                             {bid.worker?.name}
                           </div>
                           <div className="text-gray-400 text-xs">{bid.worker?.email}</div>
@@ -207,25 +212,20 @@ const IncomingBids = () => {
                       ${bid.amount}
                     </div>
 
-                    {/* Experience & Rating */}
-                    <div className="space-y-1">
-                      <div className="text-gray-300 text-sm">
-                        {bid.worker?.experience || 'No experience listed'}
-                      </div>
-                      <div className="flex items-center gap-1">
-                        {getRatingStars(bid.worker?.rating || 0)}
-                        <span className="text-gray-400 text-xs ml-1">({bid.worker?.rating || 0})</span>
-                      </div>
+                    {/* Rating */}
+                    <div className="flex items-center gap-1">
+                      {getRatingStars(bid.worker?.rating || 0)}
+                      <span className="text-gray-400 text-xs ml-1">({bid.worker?.rating || 0})</span>
                     </div>
 
-                    {/* Contact Info */}
-                    <div className="space-y-1">
-                      {bid.worker?.phone && (
-                        <div className="text-gray-300 text-sm">📞 {bid.worker.phone}</div>
-                      )}
-                      {bid.worker?.location && (
-                        <div className="text-gray-300 text-sm">📍 {bid.worker.location}</div>
-                      )}
+                    {/* Proposal */}
+                    <div>
+                      <button
+                        onClick={() => showProposal(bid.message)}
+                        className="text-blue-400 hover:text-blue-300 text-sm font-medium transition"
+                      >
+                        View Proposal
+                      </button>
                     </div>
 
                     {/* Submitted Date */}
@@ -261,13 +261,6 @@ const IncomingBids = () => {
                       )}
                     </div>
                   </div>
-                  
-                  {/* Bid Message */}
-                  <div className="mt-3 pt-3 border-t border-gray-700">
-                    <div className="text-gray-300 text-sm">
-                      <span className="text-gray-400 font-medium">Proposal:</span> {bid.message}
-                    </div>
-                  </div>
                 </div>
               ))}
             </div>
@@ -285,114 +278,33 @@ const IncomingBids = () => {
           </div>
         )}
 
-        {/* Worker Profile Modal */}
-        {showWorkerModal && selectedWorker && (
+        {/* Proposal Modal */}
+        {showProposalModal && selectedProposal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-            <div className="bg-gray-800 rounded-lg shadow-xl p-8 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto border border-gray-700">
+            <div className="bg-gray-800 rounded-lg shadow-xl p-8 w-full max-w-2xl mx-4 border border-gray-700">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-white">Worker Profile</h2>
+                <h2 className="text-2xl font-bold text-white">Worker Proposal</h2>
                 <button
-                  onClick={() => setShowWorkerModal(false)}
+                  onClick={() => setShowProposalModal(false)}
                   className="text-gray-400 hover:text-gray-600 text-2xl font-bold"
                 >
                   ×
                 </button>
               </div>
               
-              <div className="space-y-6">
-                {/* Worker Header */}
-                <div className="flex items-center gap-4">
-                  {selectedWorker.profilePic ? (
-                    <img 
-                      src={selectedWorker.profilePic} 
-                      alt="Profile" 
-                      className="w-16 h-16 rounded-full object-cover border-2 border-blue-200"
-                    />
-                  ) : (
-                    <div className="w-16 h-16 rounded-full bg-blue-600 flex items-center justify-center text-xl font-bold text-white">
-                      {selectedWorker.name?.charAt(0)?.toUpperCase() || 'W'}
-                    </div>
-                  )}
-                  <div>
-                    <h3 className="text-xl font-bold text-white">{selectedWorker.name}</h3>
-                    <div className="flex items-center gap-2 mt-1">
-                      {getRatingStars(selectedWorker.rating || 0)}
-                      <span className="text-gray-400 text-sm">({selectedWorker.rating || 0})</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Contact Information */}
-                <div className="bg-gray-700 rounded-lg p-4">
-                  <h4 className="text-lg font-semibold text-white mb-3">Contact Information</h4>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex items-center gap-2 text-gray-300">
-                      <span className="text-gray-400">Email:</span>
-                      <span className="text-white">{selectedWorker.email}</span>
-                    </div>
-                    {selectedWorker.phone && (
-                      <div className="flex items-center gap-2 text-gray-300">
-                        <span className="text-gray-400">Phone:</span>
-                        <span className="text-white">{selectedWorker.phone}</span>
-                      </div>
-                    )}
-                    {selectedWorker.location && (
-                      <div className="flex items-center gap-2 text-gray-300">
-                        <span className="text-gray-400">Location:</span>
-                        <span className="text-white">{selectedWorker.location}</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Experience & Skills */}
-                <div className="bg-gray-700 rounded-lg p-4">
-                  <h4 className="text-lg font-semibold text-white mb-3">Experience & Skills</h4>
-                  <div className="space-y-3 text-sm">
-                    {selectedWorker.experience && (
-                      <div>
-                        <span className="text-gray-400 font-medium">Experience:</span>
-                        <p className="text-white mt-1">{selectedWorker.experience}</p>
-                      </div>
-                    )}
-                    {selectedWorker.category && selectedWorker.category.length > 0 && (
-                      <div>
-                        <span className="text-gray-400 font-medium">Skills:</span>
-                        <div className="flex flex-wrap gap-2 mt-1">
-                          {selectedWorker.category.map((skill, index) => (
-                            <span key={index} className="bg-blue-600 text-white px-2 py-1 rounded text-xs">
-                              {skill}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                    {selectedWorker.bio && (
-                      <div>
-                        <span className="text-gray-400 font-medium">Bio:</span>
-                        <p className="text-white mt-1">{selectedWorker.bio}</p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Contact Actions */}
-                <div className="flex gap-3 pt-4">
-                  {selectedWorker.phone && (
-                    <a
-                      href={`tel:${selectedWorker.phone}`}
-                      className="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg transition text-center"
-                    >
-                      📞 Call Worker
-                    </a>
-                  )}
-                  <a
-                    href={`mailto:${selectedWorker.email}`}
-                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition text-center"
-                  >
-                    ✉️ Send Email
-                  </a>
-                </div>
+              <div className="bg-gray-700 rounded-lg p-6">
+                <p className="text-gray-300 leading-relaxed whitespace-pre-wrap">
+                  {selectedProposal}
+                </p>
+              </div>
+              
+              <div className="mt-6 text-center">
+                <button
+                  onClick={() => setShowProposalModal(false)}
+                  className="bg-gray-600 hover:bg-gray-700 text-white font-semibold px-6 py-3 rounded-lg transition"
+                >
+                  Close
+                </button>
               </div>
             </div>
           </div>

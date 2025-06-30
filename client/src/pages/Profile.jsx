@@ -81,14 +81,13 @@ const Profile = () => {
     setSaving(true);
     setError(''); setSuccess('');
     try {
-      const res = await axios.put('/api/user/profile', {
+      const res = await axios.post('/api/user/profile', {
         name: form.name,
         phone: form.phone,
         profilePic: form.profilePic,
         category: form.category,
         experience: form.experience,
         demandableBudget: form.demandableBudget,
-        skill: form.skill,
         bio: form.bio,
         organizationType: form.organizationType,
         organizationName: form.organizationName,
@@ -98,9 +97,11 @@ const Profile = () => {
       setUser(res.data.user);
       localStorage.setItem('user', JSON.stringify(res.data.user));
       setEditSection(null);
-      setSuccess('Profile updated!');
+      setSuccess('Profile updated successfully!');
       setProfilePicFile(null);
-    } catch (err) { setError('Failed to update profile.'); }
+    } catch (err) { 
+      setError(err.response?.data?.message || 'Failed to update profile.'); 
+    }
     setSaving(false);
   };
 

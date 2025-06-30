@@ -117,12 +117,34 @@ exports.getMyJobs = async (req, res) => {
 
 exports.getAcceptedJobs = async (req, res) => {
   try {
+    // First get jobs where the worker is assigned (regardless of job status)
     const jobs = await Job.find({ 
-      workers: req.user.id, 
-      status: { $in: ['Assigned', 'Completed'] } 
-    }).populate('client', 'name email');
-    res.json(jobs);
+      workers: req.user.id
+    }).populate('client', 'name email phone location organizationName organizationType');
+    
+    // For each job, get the worker's bid details
+    const jobsWithBids = await Promise.all(jobs.map(async (job) => {
+      const Bid = require('../models/Bid');
+      const bid = await Bid.findOne({ 
+        job: job._id, 
+        worker: req.user.id,
+        status: 'Accepted'
+      });
+      
+      return {
+        ...job.toObject(),
+        bidDetails: bid ? {
+          amount: bid.amount,
+          message: bid.message,
+          submittedAt: bid.createdAt,
+          status: bid.status
+        } : null
+      };
+    }));
+    
+    res.json(jobsWithBids);
   } catch (err) {
+    console.error('Error fetching accepted jobs:', err);
     res.status(500).json({ message: 'Failed to fetch your accepted jobs.' });
   }
 };
@@ -134,6 +156,49 @@ exports.updateJobStatus = async (req, res) => {
     if (!job) return res.status(404).json({ message: 'Job not found.' });
     res.json(job);
   } catch (err) {
+    res.status(500).json({ message: 'Failed to update job status.' });
+  }
+};
+
+// Worker updates their job status (start work, update progress, complete)
+exports.updateWorkerJobStatus = async (req, res) => {
+  try {
+    const { status } = req.body;
+    const jobId = req.params.id;
+    
+    // Check if the job exists and worker is assigned to it
+    const job = await Job.findById(jobId);
+    if (!job) {
+      return res.status(404).json({ message: 'Job not found.' });
+    }
+    
+    if (!job.workers.includes(req.user.id)) {
+      return res.status(403).json({ message: 'You are not assigned to this job.' });
+    }
+    
+    // Validate status transitions
+    const validTransitions = {
+      'Assigned': ['In Progress'],
+      'In Progress': ['Completed'],
+      'Completed': [] // No further transitions
+    };
+    
+    if (!validTransitions[job.status]?.includes(status)) {
+      return res.status(400).json({ 
+        message: `Cannot change status from ${job.status} to ${status}.` 
+      });
+    }
+    
+    // Update the job status
+    const updatedJob = await Job.findByIdAndUpdate(
+      jobId, 
+      { status }, 
+      { new: true }
+    ).populate('client', 'name email phone location organizationName organizationType');
+    
+    res.json(updatedJob);
+  } catch (err) {
+    console.error('Error updating worker job status:', err);
     res.status(500).json({ message: 'Failed to update job status.' });
   }
 }; 
