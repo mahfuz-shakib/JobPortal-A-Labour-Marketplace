@@ -7,11 +7,20 @@ const authMiddleware = require('../middleware/authMiddleware');
 router.post('/', authMiddleware, jobController.createJob);
 // Get all jobs
 router.get('/', jobController.getJobs);
+
+// Get jobs posted by the logged-in client
+router.get('/my', authMiddleware, jobController.getMyJobs);
+// Get jobs accepted by the logged-in worker
+router.get('/accepted', authMiddleware, jobController.getAcceptedJobs);
+
 // Get job by id
 router.get('/:id', jobController.getJobById);
 // Update job
 router.put('/:id', authMiddleware, jobController.updateJob);
 // Delete job
 router.delete('/:id', authMiddleware, jobController.deleteJob);
+
+// Update job status (client/worker)
+router.patch('/:id/status', authMiddleware, jobController.updateJobStatus);
 
 module.exports = router; 

@@ -1,55 +1,259 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const JobPost = () => {
-  const [form, setForm] = useState({ title: '', description: '', location: '', budget: '' });
+  const navigate = useNavigate();
+  const [form, setForm] = useState({
+    title: '',
+    description: '',
+    location: '',
+    budget: '',
+    deadline: '',
+    workCategory: '',
+    workDuration: '',
+    workersNeeded: 1,
+    requirements: '',
+    applicationDeadline: ''
+  });
   const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+  const handleChange = e => setForm(f => ({ ...f, [e.target.name]: e.target.value }));
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
+    setLoading(true);
+    setMessage('');
+    
     try {
-      const token = localStorage.getItem('token');
-      await axios.post('/api/jobs', form, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await axios.post('/api/jobs', form);
       setMessage('Job posted successfully!');
-      setForm({ title: '', description: '', location: '', budget: '' });
+      setTimeout(() => {
+        navigate('/posted-jobs');
+      }, 2000);
     } catch (err) {
-      setMessage(err.response?.data?.message || 'Job post failed');
+      setMessage(err.response?.data?.message || 'Failed to post job.');
     }
+    setLoading(false);
   };
+
+  const workCategories = [
+    'Cooking/Catering',
+    'Cook/Chef',
+    'Masonry',
+    'Electrical',
+    'Plumbing',
+    'Painting',
+    'Carpentry',
+    'Cleaning',
+    'Construction',
+    'Moving & Packing',
+    'Roofing',
+    'Flooring',
+    'Welding',
+    'Demolition',
+    'Gardening',
+    'Delivery',
+    'Loading/Unloading',
+    'Maintenance',
+    'Helping Hand',
+    'Other'
+  ];
 
   return (
-    <section className="flex items-center justify-center min-h-[70vh] bg-white rounded-xl shadow-lg p-6 sm:p-10 max-w-lg mx-auto mt-10">
-      <div className="w-full">
-        <h2 className="text-3xl font-extrabold text-blue-700 mb-6 text-center">Post a Job</h2>
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div>
-            <label className="block text-gray-700 font-semibold mb-1" htmlFor="title">Title</label>
-            <input name="title" id="title" value={form.title} onChange={handleChange} placeholder="Title" className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-200 focus:outline-none" required />
+    <section className="min-h-[60vh] bg-gray-900 text-gray-100 px-4 py-8">
+      <div className="max-w-2xl mx-auto">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-white mb-2">Post a Labor Job</h1>
+          <p className="text-gray-400">Find workers for your labor needs</p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="bg-gray-800 rounded-xl p-8 border border-gray-700">
+          {/* Basic Information */}
+          <div className="space-y-6">
+            <div>
+              <label className="block text-gray-300 text-sm font-medium mb-2">
+                Job Title *
+              </label>
+              <input 
+                name="title" 
+                value={form.title} 
+                onChange={handleChange} 
+                placeholder="e.g., House Cleaning, Garden Work, Moving Help" 
+                className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none" 
+                required 
+              />
+            </div>
+
+            <div>
+              <label className="block text-gray-300 text-sm font-medium mb-2">
+                Job Description *
+              </label>
+              <textarea 
+                name="description" 
+                value={form.description} 
+                onChange={handleChange} 
+                placeholder="Describe the work needed and specific tasks..." 
+                rows="4"
+                className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none" 
+                required 
+              />
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-gray-300 text-sm font-medium mb-2">
+                  Location *
+                </label>
+                <input 
+                  name="location" 
+                  value={form.location} 
+                  onChange={handleChange} 
+                  placeholder="e.g., Downtown, Rural area, Specific address" 
+                  className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none" 
+                  required 
+                />
+              </div>
+
+              <div>
+                <label className="block text-gray-300 text-sm font-medium mb-2">
+                  Budget ($) *
+                </label>
+                <input 
+                  name="budget" 
+                  value={form.budget} 
+                  onChange={handleChange} 
+                  placeholder="e.g., 50, 100, 200" 
+                  type="number" 
+                  min="1"
+                  className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none" 
+                  required 
+                />
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-gray-300 text-sm font-medium mb-2">
+                  Work Category *
+                </label>
+                <select 
+                  name="workCategory" 
+                  value={form.workCategory} 
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none" 
+                  required
+                >
+                  <option value="">Select work category</option>
+                  {workCategories.map(category => (
+                    <option key={category} value={category}>{category}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-gray-300 text-sm font-medium mb-2">
+                  Workers Needed
+                </label>
+                <input 
+                  name="workersNeeded" 
+                  value={form.workersNeeded} 
+                  onChange={handleChange} 
+                  type="number" 
+                  min="1"
+                  className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none" 
+                />
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-gray-300 text-sm font-medium mb-2">
+                  Work Duration *
+                </label>
+                <input 
+                  name="workDuration" 
+                  value={form.workDuration} 
+                  onChange={handleChange} 
+                  placeholder="e.g., 2 hours, Full day, 3 days" 
+                  className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none" 
+                  required 
+                />
+              </div>
+
+              <div>
+                <label className="block text-gray-300 text-sm font-medium mb-2">
+                  Deadline (if any)
+                </label>
+                <input 
+                  name="deadline" 
+                  value={form.deadline} 
+                  onChange={handleChange} 
+                  type="date" 
+                  className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none" 
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-gray-300 text-sm font-medium mb-2">
+                Application Deadline
+              </label>
+              <input 
+                name="applicationDeadline" 
+                value={form.applicationDeadline} 
+                onChange={handleChange} 
+                type="date" 
+                className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none" 
+                placeholder="When should workers submit their bids by?"
+              />
+            </div>
+
+            <div>
+              <label className="block text-gray-300 text-sm font-medium mb-2">
+                Requirements
+              </label>
+              <textarea 
+                name="requirements" 
+                value={form.requirements} 
+                onChange={handleChange} 
+                placeholder="Tools needed, physical requirements, safety gear, certifications, etc." 
+                rows="3"
+                className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none" 
+              />
+            </div>
           </div>
-          <div>
-            <label className="block text-gray-700 font-semibold mb-1" htmlFor="description">Description</label>
-            <textarea name="description" id="description" value={form.description} onChange={handleChange} placeholder="Description" className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-200 focus:outline-none" required />
+
+          {/* Submit Button */}
+          <div className="mt-8 flex gap-4">
+            <button 
+              type="submit" 
+              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-3 rounded-lg transition disabled:opacity-50" 
+              disabled={loading}
+            >
+              {loading ? 'Posting Job...' : 'Post Labor Job'}
+            </button>
+            <button 
+              type="button"
+              onClick={() => navigate('/jobs')}
+              className="bg-gray-600 hover:bg-gray-700 text-white font-semibold px-8 py-3 rounded-lg transition"
+            >
+              Cancel
+            </button>
           </div>
-          <div>
-            <label className="block text-gray-700 font-semibold mb-1" htmlFor="location">Location</label>
-            <input name="location" id="location" value={form.location} onChange={handleChange} placeholder="Location" className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-200 focus:outline-none" required />
-          </div>
-          <div>
-            <label className="block text-gray-700 font-semibold mb-1" htmlFor="budget">Budget</label>
-            <input name="budget" id="budget" value={form.budget} onChange={handleChange} placeholder="Budget" type="number" className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-200 focus:outline-none" required />
-          </div>
-          <button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold p-3 rounded-lg shadow transition text-lg">Post Job</button>
+
+          {message && (
+            <div className={`mt-4 p-4 rounded-lg font-semibold ${
+              message.includes('successfully') ? 'bg-green-900 text-green-300' : 'bg-red-900 text-red-300'
+            }`}>
+              {message}
+            </div>
+          )}
         </form>
-        {message && <p className={`mt-6 text-center font-semibold ${message.includes('success') ? 'text-green-600' : 'text-red-500'}`}>{message}</p>}
       </div>
     </section>
   );
 };
 
-export default JobPost; 
+export default JobPost;

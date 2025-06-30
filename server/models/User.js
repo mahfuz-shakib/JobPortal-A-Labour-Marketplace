@@ -1,17 +1,25 @@
 const mongoose = require('mongoose');
 
+// Popular Bangladeshi service categories: electrician, plumber, mason, cook, driver, tailor, carpenter, cleaner, painter, AC mechanic, computer technician, etc.
+
 const UserSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  phone: { type: String, required: true },
+  phone: { type: String },
   role: { type: String, enum: ['client', 'worker'], required: true },
-  skill: { type: String }, // Only for workers
-  bio: { type: String },   // Only for workers
-  profilePic: { type: String }, // base64 or URL
-  organizationType: { type: String }, // e.g., Business, Individual, Nonprofit, etc.
-  organizationName: { type: String }, // For clients (organizations/individuals)
-  location: { type: String }, // For both workers and clients
+  // Worker-specific fields
+  category: [{ type: String, required: function() { return this.role === 'worker'; } }],
+  experience: { type: String },
+  demandableBudget: { type: Number },
+  rating: { type: Number, default: 0 },
+  availability: { type: Boolean, default: true },
+  profilePic: { type: String },
+  bio: { type: String },
+  location: { type: String },
+  // Client-specific fields
+  organizationType: { type: String },
+  organizationName: { type: String },
   description: { type: String },
 }, { timestamps: true });
 

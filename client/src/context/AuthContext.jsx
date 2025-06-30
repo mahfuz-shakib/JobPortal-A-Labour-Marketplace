@@ -7,12 +7,27 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const setAuthToken = (token) => {
+    if (token) {
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    } else {
+      delete axios.defaults.headers.common['Authorization'];
+    }
+  };
+
   useEffect(() => {
     const token = localStorage.getItem('token');
     const userInfo = localStorage.getItem('user');
     if (token && userInfo) {
-      setUser(JSON.parse(userInfo));
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      try {
+        const user = JSON.parse(userInfo);
+        setUser(user);
+        setAuthToken(token);
+      } catch (err) {
+        console.error('Error parsing user info:', err);
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+      }
     }
     setLoading(false);
   }, []);
@@ -22,7 +37,7 @@ export const AuthProvider = ({ children }) => {
       const res = await axios.post('/api/auth/login', { email, password });
       localStorage.setItem('token', res.data.token);
       localStorage.setItem('user', JSON.stringify(res.data.user));
-      axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`;
+      setAuthToken(res.data.token);
       setUser(res.data.user);
     } catch (err) {
       // Pass backend error message up
@@ -38,7 +53,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    delete axios.defaults.headers.common['Authorization'];
+    setAuthToken(null);
     setUser(null);
   };
 

@@ -79,4 +79,31 @@ exports.uploadProfilePic = async (req, res) => {
     console.error('Profile pic upload error:', err);
     res.status(500).json({ message: 'Server error' });
   }
+};
+
+// List/search/filter workers
+exports.getWorkers = async (req, res) => {
+  try {
+    const { category, location, minRating, available } = req.query;
+    const query = { role: 'worker' };
+    if (category) query.category = category;
+    if (location) query.location = location;
+    if (minRating) query.rating = { $gte: Number(minRating) };
+    if (available !== undefined) query.availability = available === 'true';
+    const workers = await User.find(query).select('-password');
+    res.json(workers);
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to fetch workers.' });
+  }
+};
+
+// Get public worker profile by ID
+exports.getWorkerProfile = async (req, res) => {
+  try {
+    const worker = await User.findById(req.params.id).select('-password');
+    if (!worker || worker.role !== 'worker') return res.status(404).json({ message: 'Worker not found.' });
+    res.json(worker);
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to fetch worker profile.' });
+  }
 }; 

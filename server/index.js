@@ -22,6 +22,7 @@ mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/workmatch')
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/jobs', require('./routes/job'));
 app.use('/api/user', require('./routes/user'));
+app.use('/api/bids', require('./routes/bid'));
 
 app.get('/', (req, res) => {
   res.send('WorkMatch backend is running!');

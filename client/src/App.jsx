@@ -9,6 +9,13 @@ import Layout from './components/Layout';
 import { AuthProvider } from './context/AuthContext';
 import Profile from './pages/Profile';
 import Dashboard from './pages/Dashboard';
+import PostedJobs from './pages/PostedJobs';
+import IncomingBids from './pages/IncomingBids';
+import SubmittedBids from './pages/SubmittedBids';
+import AcceptedJobs from './pages/AcceptedJobs';
+import WorkerDirectory from './pages/WorkerDirectory';
+import WorkerProfile from './pages/WorkerProfile';
+import JobDetails from './pages/JobDetails';
 
 function App() {
   return (
@@ -22,6 +29,14 @@ function App() {
             <Route path="/post-job" element={<JobPost />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/posted-jobs" element={<PostedJobs />} />
+            <Route path="/incoming-bids" element={<IncomingBids />} />
+            <Route path="/incoming-bids/:jobId" element={<IncomingBids />} />
+            <Route path="/submitted-bids" element={<SubmittedBids />} />
+            <Route path="/accepted-jobs" element={<AcceptedJobs />} />
+            <Route path="/workers" element={<WorkerDirectory />} />
+            <Route path="/worker/:id" element={<WorkerProfile />} />
+            <Route path="/jobs/:id" element={<JobDetails />} />
             <Route path="/" element={<HomePage />} />
           </Routes>
         </Layout>
