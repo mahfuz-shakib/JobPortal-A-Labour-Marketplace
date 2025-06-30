@@ -27,11 +27,11 @@ const JobPost = () => {
     setMessage('');
     
     try {
-      await axios.post('/api/jobs', form);
+      const res = await axios.post('/api/jobs', form);
       setMessage('Job posted successfully!');
       setTimeout(() => {
-        navigate('/posted-jobs');
-      }, 2000);
+        navigate(`/jobs/${res.data._id}`);
+      }, 1500);
     } catch (err) {
       setMessage(err.response?.data?.message || 'Failed to post job.');
     }
