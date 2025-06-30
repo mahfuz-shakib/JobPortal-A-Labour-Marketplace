@@ -87,57 +87,36 @@ exports.deleteAccount = async (req, res) => {
     const isMatch = await bcrypt.compare(currentPassword, user.password);
     if (!isMatch) return res.status(400).json({ message: 'Current password is incorrect.' });
 
-    // Start a database session for transaction
-    const session = await mongoose.startSession();
-    session.startTransaction();
-
-    try {
-      if (user.role === 'client') {
-        // For clients: Delete all their posted jobs (this will cascade delete related bids)
-        const jobsToDelete = await Job.find({ client: user._id }).session(session);
-        const jobIds = jobsToDelete.map(job => job._id);
-        
-        // Delete all bids related to these jobs
-        await Bid.deleteMany({ job: { $in: jobIds } }).session(session);
-        
-        // Delete all the jobs
-        await Job.deleteMany({ client: user._id }).session(session);
-        
-        console.log(`Deleted ${jobsToDelete.length} jobs and their associated bids for client ${user._id}`);
-      }
-
-      // For workers: Delete all their submitted bids
-      const deletedBids = await Bid.deleteMany({ worker: user._id }).session(session);
-      console.log(`Deleted ${deletedBids.deletedCount} bids for worker ${user._id}`);
-
-      // Remove user from any jobs where they're assigned as a worker
-      const jobsWithWorker = await Job.find({ workers: user._id }).session(session);
-      for (const job of jobsWithWorker) {
-        job.workers = job.workers.filter(workerId => workerId.toString() !== user._id.toString());
-        job.assignedWorkersCount = job.workers.length;
-        
-        // If no workers left and job was assigned, set it back to open
-        if (job.workers.length === 0 && job.status === 'Assigned') {
-          job.status = 'Open';
-        }
-        
-        await job.save({ session });
-      }
-      console.log(`Removed worker ${user._id} from ${jobsWithWorker.length} assigned jobs`);
-
-      // Finally, delete the user account
-      await User.findByIdAndDelete(user._id).session(session);
-
-      await session.commitTransaction();
-      console.log(`Successfully deleted account for user ${user._id} (${user.role})`);
-      
-      res.json({ message: 'Account and all associated data deleted successfully' });
-    } catch (error) {
-      await session.abortTransaction();
-      throw error;
-    } finally {
-      session.endSession();
+    // Delete all jobs posted by the user (if client), and all bids on those jobs
+    if (user.role === 'client') {
+      const jobsToDelete = await Job.find({ client: user._id });
+      const jobIds = jobsToDelete.map(job => job._id);
+      await Bid.deleteMany({ job: { $in: jobIds } });
+      await Job.deleteMany({ client: user._id });
+      console.log(`Deleted ${jobsToDelete.length} jobs and their associated bids for client ${user._id}`);
     }
+
+    // Delete all bids submitted by the user (if worker)
+    const deletedBids = await Bid.deleteMany({ worker: user._id });
+    console.log(`Deleted ${deletedBids.deletedCount} bids for worker ${user._id}`);
+
+    // Remove user from any jobs where they're assigned as a worker
+    const jobsWithWorker = await Job.find({ workers: user._id });
+    for (const job of jobsWithWorker) {
+      job.workers = job.workers.filter(workerId => workerId.toString() !== user._id.toString());
+      job.assignedWorkersCount = job.workers.length;
+      if (job.workers.length === 0 && job.status === 'Assigned') {
+        job.status = 'Open';
+      }
+      await job.save();
+    }
+    console.log(`Removed worker ${user._id} from ${jobsWithWorker.length} assigned jobs`);
+
+    // Finally, delete the user account
+    await User.findByIdAndDelete(user._id);
+    console.log(`Successfully deleted account for user ${user._id} (${user.role})`);
+    
+    res.json({ message: 'Account and all associated data deleted successfully' });
   } catch (err) {
     console.error('Account deletion error:', err);
     res.status(500).json({ message: 'Server error during account deletion' });

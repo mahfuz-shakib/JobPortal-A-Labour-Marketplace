@@ -140,14 +140,12 @@ const PostedJobs = () => {
                         >
                           View Details
                         </Link>
-                        {job.status === 'Open' && (
-                          <button
-                            onClick={() => confirmDelete(job._id, job.title)}
-                            className="text-red-400 hover:text-red-300 text-xs font-medium transition"
-                          >
-                            Delete
-                          </button>
-                        )}
+                        <button
+                          onClick={() => confirmDelete(job._id, job.title)}
+                          className="text-red-400 hover:text-red-300 text-xs font-medium transition"
+                        >
+                          Delete
+                        </button>
                       </div>
                     </div>
 

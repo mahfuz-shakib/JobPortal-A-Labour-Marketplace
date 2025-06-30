@@ -184,7 +184,7 @@ const JobPost = () => {
 
               <div>
                 <label className="block text-gray-300 text-sm font-medium mb-2">
-                  Deadline (if any)
+                  Posted Date
                 </label>
                 <input 
                   name="deadline" 

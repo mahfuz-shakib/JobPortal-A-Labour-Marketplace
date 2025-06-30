@@ -1,6 +1,7 @@
 import React, { useContext, useRef, useState } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const Profile = () => {
   const { user, setUser, logout } = useContext(AuthContext);
@@ -30,6 +31,7 @@ const Profile = () => {
   const [emailInput, setEmailInput] = useState(user?.email || '');
   const [deletePassword, setDeletePassword] = useState('');
   const fileInputRef = useRef();
+  const navigate = useNavigate();
 
   if (!user) return <div className="text-center mt-10 text-white">You must be logged in to view your profile.</div>;
 
@@ -144,7 +146,10 @@ const Profile = () => {
     try {
       await axios.post('/api/user/delete', { currentPassword: deletePassword });
       setSuccess('Account deleted. Logging out...');
-      setTimeout(() => { logout(); }, 1500);
+      setTimeout(() => {
+        logout();
+        navigate('/login');
+      }, 1500);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to delete account.');
     }
