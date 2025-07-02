@@ -13,7 +13,8 @@ exports.createJob = async (req, res) => {
       workDuration,
       workersNeeded,
       requirements,
-      applicationDeadline
+      applicationDeadline,
+      jobImage
     } = req.body;
     
     const clientId = req.user.id;
@@ -33,7 +34,8 @@ exports.createJob = async (req, res) => {
       workersNeeded: workersNeeded || 1,
       requirements,
       applicationDeadline,
-      client: clientId
+      client: clientId,
+      jobImage
     });
     
     await job.save();

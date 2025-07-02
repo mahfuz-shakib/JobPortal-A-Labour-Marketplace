@@ -21,6 +21,8 @@ const JobDetails = () => {
   const [saving, setSaving] = useState(false);
   const [editMessage, setEditMessage] = useState('');
   const [showBidForm, setShowBidForm] = useState(false);
+  const [editJobImage, setEditJobImage] = useState();
+  const [editJobImagePreview, setEditJobImagePreview] = useState();
 
   const workCategories = [
     'Cooking/Catering',
@@ -62,6 +64,8 @@ const JobDetails = () => {
           applicationDeadline: res.data.applicationDeadline || '',
           deadline: res.data.deadline || ''
         });
+        setEditJobImage(res.data.jobImage);
+        setEditJobImagePreview(res.data.jobImage);
       } catch (err) {
         setJob(null);
       }
@@ -133,7 +137,7 @@ const JobDetails = () => {
     setSaving(true);
     setEditMessage('');
     try {
-      const res = await axios.put(`/api/jobs/${id}`, editForm);
+      const res = await axios.put(`/api/jobs/${id}`, { ...editForm, jobImage: editJobImage });
       setJob(res.data);
       setEditing(false);
       setEditMessage('Job updated successfully!');
@@ -162,6 +166,26 @@ const JobDetails = () => {
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString();
+  };
+
+  const handleEditImageChange = e => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setEditJobImage(reader.result);
+        setEditJobImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setEditJobImage(undefined);
+      setEditJobImagePreview(undefined);
+    }
+  };
+
+  const handleRemoveEditImage = () => {
+    setEditJobImage(undefined);
+    setEditJobImagePreview(undefined);
   };
 
   if (loading) return (
@@ -223,7 +247,7 @@ const JobDetails = () => {
 
               {/* Action Buttons */}
               <div className="flex items-center justify-end pt-4 sm:pt-6 mt-4 sm:mt-6 border-t border-gray-200">
-                {isJobOwner && job.status === 'Open' && (
+                {isJobOwner && (
                   <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
                     <button
                       onClick={() => setEditing(true)}
@@ -611,6 +635,23 @@ const JobDetails = () => {
                     rows="3"
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
                   />
+                </div>
+
+                {/* Job Image Upload/Edit */}
+                <div>
+                  <label className="block text-gray-700 font-semibold mb-2 text-sm">Job Image (optional)</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleEditImageChange}
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  />
+                  {editJobImagePreview && (
+                    <div className="mt-3 flex items-center gap-3">
+                      <img src={editJobImagePreview} alt="Job Preview" className="w-24 h-24 object-cover rounded-lg border-2 border-blue-400 shadow" />
+                      <button type="button" onClick={handleRemoveEditImage} className="text-red-500 hover:text-red-700 font-semibold text-xs">Remove</button>
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex gap-4 pt-4">

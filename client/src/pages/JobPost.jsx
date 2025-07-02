@@ -18,8 +18,25 @@ const JobPost = () => {
   });
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
+  const [jobImage, setJobImage] = useState();
+  const [jobImagePreview, setJobImagePreview] = useState();
 
   const handleChange = e => setForm(f => ({ ...f, [e.target.name]: e.target.value }));
+
+  const handleImageChange = e => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setJobImage(reader.result);
+        setJobImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setJobImage(undefined);
+      setJobImagePreview(undefined);
+    }
+  };
 
   const handleSubmit = async e => {
     e.preventDefault();
@@ -27,7 +44,7 @@ const JobPost = () => {
     setMessage('');
     
     try {
-      const res = await axios.post('/api/jobs', form);
+      const res = await axios.post('/api/jobs', { ...form, jobImage });
       setMessage('Job posted successfully!');
       setTimeout(() => {
         navigate(`/jobs/${res.data._id}`);
@@ -222,6 +239,22 @@ const JobPost = () => {
                 rows="3"
                 className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none" 
               />
+            </div>
+
+            {/* Optional Job Image Upload */}
+            <div>
+              <label className="block text-gray-300 text-sm font-medium mb-2">
+                Job Image (optional)
+              </label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="w-full px-4 py-2 rounded-lg bg-gray-700 text-white border border-gray-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              />
+              {jobImagePreview && (
+                <img src={jobImagePreview} alt="Job Preview" className="mt-3 w-32 h-32 object-cover rounded-lg border-2 border-blue-400 shadow" />
+              )}
             </div>
           </div>
 

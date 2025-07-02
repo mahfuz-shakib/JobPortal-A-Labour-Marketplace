@@ -57,7 +57,7 @@ const SubmittedBids = () => {
   };
 
   return (
-    <section className="min-h-[60vh] bg-gray-900 text-gray-100 px-4 py-8">
+    <section className="min-h-[100vh] bg-gray-900 text-gray-100 px-4 py-8">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-8">

@@ -19,6 +19,7 @@ const JobSchema = new mongoose.Schema({
   workers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], // Array of assigned workers
   assignedWorkersCount: { type: Number, default: 0 }, // Track how many workers have been assigned
   bids: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Bid' }],
+  jobImage: { type: String }, // Optional image for the job card
 }, { timestamps: true });
 
 module.exports = mongoose.model('Job', JobSchema); 
