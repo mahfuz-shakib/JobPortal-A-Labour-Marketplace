@@ -12,9 +12,7 @@ const Navbar = () => {
     { label: 'Home', to: '/' },
     { label: 'Jobs', to: '/jobs' },
     { label: 'Find Workers', to: '/workers' },
-    { label: 'About Us', to: '/about' },
     { label: 'How It Works', to: '/how-it-works' },
-    { label: 'Contact', to: '/contact' },
     { label: 'Post Job', to: '/post-job', role: 'client' },
   ];
 

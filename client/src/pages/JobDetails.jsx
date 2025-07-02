@@ -209,7 +209,7 @@ const JobDetails = () => {
   const isJobOwner = user && job.client && (job.client._id === user.id || job.client === user.id);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <section className="min-h-screen bg-gray-50">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
         {/* Success/Error Messages */}
         {(editMessage || deleteMessage) && (
@@ -795,7 +795,7 @@ const JobDetails = () => {
           </div>
         )}
       </div>
-    </div>
+    </section>
   );
 };
 

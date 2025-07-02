@@ -38,7 +38,7 @@ const WorkerProfile = () => {
 
   if (loading) {
     return (
-      <section className="min-h-[60vh] bg-gray-900 text-gray-100 px-4 py-8">
+      <section className="min-h-screen bg-gray-900 text-gray-100 px-4 py-8">
         <div className="max-w-4xl mx-auto">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
@@ -51,7 +51,7 @@ const WorkerProfile = () => {
 
   if (error || !worker) {
     return (
-      <section className="min-h-[60vh] bg-gray-900 text-gray-100 px-4 py-8">
+      <section className="min-h-screen bg-gray-900 text-gray-100 px-4 py-8">
         <div className="max-w-4xl mx-auto">
           <div className="text-center">
             <div className="text-red-400 text-xl mb-4">
@@ -70,7 +70,7 @@ const WorkerProfile = () => {
   }
 
   return (
-    <section className="min-h-[60vh] bg-gray-900 text-gray-100 px-4 py-8">
+    <section className="min-h-screen bg-gray-900 text-gray-100 px-4 py-8">
       <div className="max-w-4xl mx-auto">
         {/* Page Header */}
         <div className="mb-8">

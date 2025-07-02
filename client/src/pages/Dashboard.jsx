@@ -12,7 +12,7 @@ const Dashboard = () => {
     );
 
   return (
-    <section className="w-full max-w-5xl mx-auto mt-10 px-2 sm:px-4">
+    <section className="min-h-screen w-full max-w-5xl mx-auto mt-10 px-2 sm:px-4">
       <h2 className="text-3xl font-extrabold text-blue-700 mb-8 text-center">Dashboard</h2>
       <div className="grid gap-6 md:grid-cols-2">
         <div className="bg-white rounded-xl shadow-lg p-6 flex flex-col gap-2 border border-gray-100">

@@ -79,7 +79,7 @@ const JobPost = () => {
   ];
 
   return (
-    <section className="min-h-[60vh] bg-gray-900 text-gray-100 px-4 py-8">
+    <section className="min-h-screen bg-gray-900 text-gray-100 px-4 py-8">
       <div className="max-w-2xl mx-auto">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-white mb-2">Post a Labor Job</h1>

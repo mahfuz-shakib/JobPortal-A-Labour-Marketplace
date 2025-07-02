@@ -105,7 +105,7 @@ const ProfileCardForm = () => {
   };
 
   return (
-    <section className="min-h-[60vh] bg-gray-900 text-gray-100 px-4 py-8 flex flex-col items-center">
+    <section className="min-h-screen bg-gray-900 text-gray-100 px-4 py-8 flex flex-col items-center">
       <div className="max-w-xl w-full bg-gray-800 rounded-xl p-8 border border-gray-700">
         <h1 className="text-2xl font-bold mb-6">Create/Edit Your Worker Profile Card</h1>
         <form onSubmit={handleSubmit} className="space-y-6">

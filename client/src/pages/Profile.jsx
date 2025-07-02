@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 const Profile = () => {
   const { user, setUser, logout } = useContext(AuthContext);
-  const [activeTab, setActiveTab] = useState('Professional Info');
+  const [activeTab, setActiveTab] = useState('Personal Info');
   const [editSection, setEditSection] = useState(null); // 'personal', 'professional', 'account', 'password', or null
   const [form, setForm] = useState({
     name: user?.name || '',
@@ -162,7 +162,7 @@ const Profile = () => {
   const tabs = ['Personal Info', 'Professional Info', 'Account Info', 'Activity/Stats'];
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900 flex flex-col md:flex-row">
+    <section className="min-h-screen bg-gray-50 text-gray-900 flex flex-col md:flex-row">
       {/* Sidebar: vertical tab list */}
       <aside className="w-full md:w-1/4 bg-white flex flex-col items-center py-10 px-4 md:min-h-screen border-b md:border-b-0 md:border-r border-gray-200 shadow-sm">
         {/* User info */}
@@ -176,7 +176,6 @@ const Profile = () => {
           )}
         </div>
         <div className="text-xl font-bold mb-1 text-center w-full break-words">{user.name}</div>
-        <div className="text-blue-500 font-semibold mb-2 capitalize">{user.role}</div>
         <div className="text-gray-500 text-sm mb-6 text-center w-full break-words">{user.email}</div>
         <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded w-full font-semibold mb-8" onClick={logout}>Logout</button>
         {/* Tab list below user info and logout */}
@@ -440,7 +439,7 @@ const Profile = () => {
           )}
         </div>
       </main>
-    </div>
+    </section>
   );
 };
 

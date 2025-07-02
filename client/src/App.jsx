@@ -17,6 +17,7 @@ import WorkerDirectory from './pages/WorkerDirectory';
 import WorkerProfile from './pages/WorkerProfile';
 import JobDetails from './pages/JobDetails';
 import ProfileCardForm from './pages/ProfileCardForm';
+import HowItWorks from './pages/HowItWorks';
 
 function App() {
   return (
@@ -40,6 +41,7 @@ function App() {
             <Route path="/jobs/:id" element={<JobDetails />} />
             <Route path="/" element={<HomePage />} />
             <Route path="/profile-card" element={<ProfileCardForm />} />
+            <Route path="/how-it-works" element={<HowItWorks />} />
           </Routes>
         </Layout>
       </Router>

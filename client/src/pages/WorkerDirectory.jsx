@@ -26,7 +26,7 @@ const WorkerDirectory = () => {
   }, [category, location]);
 
   return (
-    <section className="min-h-[100vh] max-w-7xl flex flex-col items-center text-gray-900 px-2 py-8 bg-blue-50">
+    <section className="min-h-screen w-full max-w-7xl flex flex-col items-center text-gray-900 px-2 py-8 bg-blue-50">
       <h2 className="text-2xl font-bold mb-6">Worker Lists</h2>
       <div className="flex gap-4 mb-6">
         <input value={category} onChange={e => setCategory(e.target.value)} placeholder="Category (e.g. electrician)" className="px-3 py-2 rounded text-gray-100 border border-gray-700" />

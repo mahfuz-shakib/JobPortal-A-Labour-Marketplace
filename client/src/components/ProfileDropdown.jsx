@@ -53,7 +53,6 @@ const ProfileDropdown = () => {
               )}
             </div>
             <div className="font-bold text-gray-100 text-base mb-0.5 truncate w-full text-center">{user.name}</div>
-            <span className={`px-2 py-0.5 rounded-full text-xs font-semibold mb-1 ${user.role === 'client' ? 'bg-blue-800 text-blue-200' : 'bg-green-800 text-green-200'}`}>{user.role.charAt(0).toUpperCase() + user.role.slice(1)}</span>
             <Link to="/profile" className="inline-block bg-blue-700 hover:bg-blue-600 text-white font-medium px-3 py-1 rounded shadow transition mb-1 text-xs" onClick={() => setOpen(false)}>
               View Profile
             </Link>
