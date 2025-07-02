@@ -16,6 +16,7 @@ import AcceptedJobs from './pages/AcceptedJobs';
 import WorkerDirectory from './pages/WorkerDirectory';
 import WorkerProfile from './pages/WorkerProfile';
 import JobDetails from './pages/JobDetails';
+import ProfileCardForm from './pages/ProfileCardForm';
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
             <Route path="/worker/:id" element={<WorkerProfile />} />
             <Route path="/jobs/:id" element={<JobDetails />} />
             <Route path="/" element={<HomePage />} />
+            <Route path="/profile-card" element={<ProfileCardForm />} />
           </Routes>
         </Layout>
       </Router>

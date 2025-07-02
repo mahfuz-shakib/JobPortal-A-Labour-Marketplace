@@ -18,6 +18,11 @@ const Navbar = () => {
     { label: 'Post Job', to: '/post-job', role: 'client' },
   ];
 
+  // Add Profile Card nav item for workers
+  if (user && user.role === 'worker') {
+    navItems.push({ label: 'Profile Card', to: '/profile-card' });
+  }
+
   function handleProtectedNav(to) {
     if (!user) {
       window.location.href = '/login';

@@ -139,15 +139,38 @@ exports.uploadProfilePic = async (req, res) => {
   }
 };
 
-// List/search/filter workers
+// Create or update worker profile card
+exports.createOrUpdateProfileCard = async (req, res) => {
+  try {
+    if (req.user.role !== 'worker') {
+      return res.status(403).json({ message: 'Only workers can create a profile card.' });
+    }
+    const { address, skills, available, salaryDemand, profileImage } = req.body;
+    const update = {
+      profileCardCreated: true,
+      'profileCard.address': address,
+      'profileCard.skills': skills,
+      'profileCard.available': available,
+      'profileCard.salaryDemand': salaryDemand,
+    };
+    if (profileImage) update['profileCard.profileImage'] = profileImage;
+    // If no profileImage, keep existing or fallback to profilePic
+    const user = await User.findByIdAndUpdate(req.user.id, update, { new: true });
+    res.json({ user });
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to create/update profile card.' });
+  }
+};
+
+// Update getWorkers to only return workers with profileCardCreated: true
 exports.getWorkers = async (req, res) => {
   try {
     const { category, location, minRating, available } = req.query;
-    const query = { role: 'worker' };
-    if (category) query.category = category;
-    if (location) query.location = location;
+    const query = { role: 'worker', profileCardCreated: true };
+    if (category) query['profileCard.skills'] = category;
+    if (location) query['profileCard.address'] = { $regex: location, $options: 'i' };
     if (minRating) query.rating = { $gte: Number(minRating) };
-    if (available !== undefined) query.availability = available === 'true';
+    if (available !== undefined) query['profileCard.available'] = available === 'true';
     const workers = await User.find(query).select('-password');
     res.json(workers);
   } catch (err) {

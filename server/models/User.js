@@ -21,6 +21,15 @@ const UserSchema = new mongoose.Schema({
   organizationType: { type: String },
   organizationName: { type: String },
   description: { type: String },
+  // Profile card fields
+  profileCardCreated: { type: Boolean, default: false },
+  profileCard: {
+    address: { type: String },
+    skills: [{ type: String }],
+    available: { type: Boolean, default: true },
+    salaryDemand: { type: Number },
+    profileImage: { type: String }, // base64 or URL
+  },
 }, { timestamps: true });
 
 module.exports = mongoose.model('User', UserSchema); 

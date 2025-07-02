@@ -7,6 +7,7 @@ router.post('/profile', authMiddleware, userController.updateProfile);
 router.put('/profile', authMiddleware, userController.updateProfile);
 router.post('/profile-pic', authMiddleware, userController.uploadProfilePic);
 router.post('/delete', authMiddleware, userController.deleteAccount);
+router.post('/profile-card', authMiddleware, userController.createOrUpdateProfileCard);
 
 // List/search/filter workers
 router.get('/workers', userController.getWorkers);

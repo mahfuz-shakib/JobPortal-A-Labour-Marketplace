@@ -73,7 +73,7 @@ const JobList = () => {
   if (loading) return <div className="text-center text-lg text-blue-600 font-semibold">Loading jobs...</div>;
 
   return (
-    <section className="w-full min-h-[100vh] max-w-7xl mx-auto px-2 sm:px-4 bg-gray-200">
+    <section className="w-full min-h-[100vh] max-w-7xl mx-auto px-2 sm:px-4 bg-blue-50">
       <h2 className="text-3xl font-extrabold text-blue-700 mb-8 text-center py-5">Job Listings</h2>
       {/* Modern Filter Bar */}
       <div className="flex justify-center mb-10">
