@@ -18,30 +18,77 @@ import WorkerProfile from './pages/WorkerProfile';
 import JobDetails from './pages/JobDetails';
 import ProfileCardForm from './pages/ProfileCardForm';
 import HowItWorks from './pages/HowItWorks';
+import ScrollToTop from './components/ScrollToTop';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   return (
     <AuthProvider>
       <Router>
+        <ScrollToTop />
         <Layout>
           <Routes>
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/jobs" element={<JobList />} />
-            <Route path="/post-job" element={<JobPost />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/posted-jobs" element={<PostedJobs />} />
-            <Route path="/incoming-bids" element={<IncomingBids />} />
-            <Route path="/incoming-bids/:jobId" element={<IncomingBids />} />
-            <Route path="/submitted-bids" element={<SubmittedBids />} />
-            <Route path="/accepted-jobs" element={<AcceptedJobs />} />
-            <Route path="/workers" element={<WorkerDirectory />} />
-            <Route path="/worker/:id" element={<WorkerProfile />} />
-            <Route path="/jobs/:id" element={<JobDetails />} />
             <Route path="/" element={<HomePage />} />
-            <Route path="/profile-card" element={<ProfileCardForm />} />
             <Route path="/how-it-works" element={<HowItWorks />} />
+            <Route path="/jobs" element={<JobList />} />
+            <Route path="/post-job" element={
+              <ProtectedRoute>
+                <JobPost />
+              </ProtectedRoute>
+            } />
+            <Route path="/profile" element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard" element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/posted-jobs" element={
+              <ProtectedRoute>
+                <PostedJobs />
+              </ProtectedRoute>
+            } />
+            <Route path="/incoming-bids" element={
+              <ProtectedRoute>
+                <IncomingBids />
+              </ProtectedRoute>
+            } />
+            <Route path="/incoming-bids/:jobId" element={
+              <ProtectedRoute>
+                <IncomingBids />
+              </ProtectedRoute>
+            } />
+            <Route path="/submitted-bids" element={
+              <ProtectedRoute>
+                <SubmittedBids />
+              </ProtectedRoute>
+            } />
+            <Route path="/accepted-jobs" element={
+              <ProtectedRoute>
+                <AcceptedJobs />
+              </ProtectedRoute>
+            } />
+            <Route path="/workers" element={<WorkerDirectory />} />
+            <Route path="/worker/:id" element={
+              <ProtectedRoute>
+                <WorkerProfile />
+              </ProtectedRoute>
+            } />
+            <Route path="/jobs/:id" element={
+              <ProtectedRoute>
+                <JobDetails />
+              </ProtectedRoute>
+            } />
+            <Route path="/profile-card" element={
+              <ProtectedRoute>
+                <ProfileCardForm />
+              </ProtectedRoute>
+            } />
           </Routes>
         </Layout>
       </Router>

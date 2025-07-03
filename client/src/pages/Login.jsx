@@ -35,7 +35,17 @@ const Login = () => {
     }
     setLoading(false);
   };
-
+  // const handleForgotPassword = () =>{
+  //   const email = emailRed.current.value;
+  //   if(!email)
+  //   {
+  //     toast.error('please provide your email.');
+  //   }
+  //   else
+  //   {
+  //     navigate(`/forgot-password?email=${encodeURIComponent(email)}`);
+  //   }
+  //  };
   return (
     <section className="min-h-screen flex items-center justify-center min-h-[90vh] bg-gradient-to-br from-blue-50 to-blue-100 px-2">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-6 sm:p-8 flex flex-col items-center border border-blue-100">

@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { FaUserTie, FaUsers, FaBriefcase, FaHandshake, FaShieldAlt, FaBolt, FaComments, FaStar, FaCheckCircle, FaQuestionCircle, FaTools, FaSearch, FaRegSmile, FaUser, FaMapMarkerAlt, FaMoneyBillWave, FaTimesCircle } from 'react-icons/fa';
 import axios from 'axios';
+import photo1 from '../assets/img1.jpg';
 
 const categories = [
   { name: 'Electrical', icon: <FaBolt /> },
@@ -52,7 +53,7 @@ const HeroSection = () => (
       </div>
       {/* Right: Illustration */}
       <div className="flex-1 flex items-center justify-center z-10">
-        <img src="/public/images/img1.jpg" alt="Hero" className="w-full max-w-md rounded-3xl shadow-2xl border-4 border-blue-100 object-cover" />
+        <img src={photo1} alt="Hero" className="w-full max-w-md rounded-3xl shadow-2xl border-4 border-blue-100 object-cover" />
       </div>
     </div>
   </section>

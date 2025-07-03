@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
 import { FaUser, FaMapMarkerAlt, FaMoneyBillWave, FaCheckCircle, FaTimesCircle, FaStar } from 'react-icons/fa';
 
 const WorkerDirectory = () => {
@@ -8,6 +9,8 @@ const WorkerDirectory = () => {
   const [loading, setLoading] = useState(true);
   const [category, setCategory] = useState('');
   const [location, setLocation] = useState('');
+  const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchWorkers = async () => {
@@ -76,7 +79,18 @@ const WorkerDirectory = () => {
                 </div>
                 {/* View Profile button at bottom left, responsive */}
                 <div className="absolute left-2 xs:left-3 sm:left-6 bottom-2 xs:bottom-3 sm:bottom-6 flex justify-start">
-                  <a href={`/worker/${worker._id}`} className="px-3 xs:px-4 sm:px-5 py-1.5 xs:py-2 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition shadow text-center text-xs xs:text-sm sm:text-base">View Profile and Contact</a>
+                  <button
+                    className="px-3 xs:px-4 sm:px-5 py-1.5 xs:py-2 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition shadow text-center text-xs xs:text-sm sm:text-base"
+                    onClick={() => {
+                      if (!user) {
+                        navigate('/login', { state: { from: `/worker/${worker._id}` } });
+                        return;
+                      }
+                      navigate(`/worker/${worker._id}`);
+                    }}
+                  >
+                    View Profile and Contact
+                  </button>
                 </div>
               </div>
             );

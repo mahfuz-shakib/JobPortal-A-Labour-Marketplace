@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
+import ReviewModal from '../components/ReviewModal';
 
 const JobDetails = () => {
   const { id } = useParams();
@@ -23,6 +24,13 @@ const JobDetails = () => {
   const [showBidForm, setShowBidForm] = useState(false);
   const [editJobImage, setEditJobImage] = useState();
   const [editJobImagePreview, setEditJobImagePreview] = useState();
+  // Review state
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [selectedWorker, setSelectedWorker] = useState(null);
+  const [reviewMessage, setReviewMessage] = useState('');
+  // Worker proposal state
+  const [showProposalModal, setShowProposalModal] = useState(false);
+  const [selectedProposal, setSelectedProposal] = useState('');
 
   const workCategories = [
     'Cooking/Catering',
@@ -113,6 +121,17 @@ const JobDetails = () => {
     setUpdatingStatus(false);
   };
 
+  const handleWorkerStatusUpdate = async (newStatus) => {
+    setUpdatingStatus(true);
+    try {
+      const res = await axios.patch(`/api/jobs/${id}/worker-status`, { status: newStatus });
+      setJob(res.data);
+    } catch (err) {
+      console.error('Error updating worker status:', err);
+    }
+    setUpdatingStatus(false);
+  };
+
   const handleDeleteJob = async () => {
     setDeleting(true);
     setDeleteMessage('');
@@ -188,6 +207,42 @@ const JobDetails = () => {
     setEditJobImagePreview(undefined);
   };
 
+  // Review functions
+  const handleReviewSubmit = async (reviewData) => {
+    try {
+      await axios.post('/api/reviews', {
+        jobId: id,
+        workerId: selectedWorker._id,
+        rating: reviewData.rating,
+        review: reviewData.review
+      });
+      
+      setReviewMessage('Review submitted successfully!');
+      setTimeout(() => setReviewMessage(''), 3000);
+      
+      // Refresh job data to show updated worker ratings
+      const res = await axios.get(`/api/jobs/${id}`);
+      setJob(res.data);
+      
+      return Promise.resolve();
+    } catch (err) {
+      const errorMsg = err.response?.data?.message || 'Failed to submit review';
+      setReviewMessage(errorMsg);
+      setTimeout(() => setReviewMessage(''), 3000);
+      return Promise.reject(err);
+    }
+  };
+
+  const openReviewModal = (worker) => {
+    setSelectedWorker(worker);
+    setShowReviewModal(true);
+  };
+
+  const showWorkerProposal = (proposal) => {
+    setSelectedProposal(proposal);
+    setShowProposalModal(true);
+  };
+
   if (loading) return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
       <div className="text-center">
@@ -212,13 +267,13 @@ const JobDetails = () => {
     <section className="min-h-screen bg-gray-50">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
         {/* Success/Error Messages */}
-        {(editMessage || deleteMessage) && (
+        {(editMessage || deleteMessage || reviewMessage) && (
           <div className={`mb-6 sm:mb-8 p-3 sm:p-4 rounded-lg font-semibold text-center text-sm sm:text-base ${
-            (editMessage || deleteMessage).includes('successfully') 
+            (editMessage || deleteMessage || reviewMessage).includes('successfully') 
               ? 'bg-green-100 text-green-800 border border-green-200' 
               : 'bg-red-100 text-red-800 border border-red-200'
           }`}>
-            {editMessage || deleteMessage}
+            {editMessage || deleteMessage || reviewMessage}
           </div>
         )}
 
@@ -312,45 +367,132 @@ const JobDetails = () => {
                   Assigned Workers ({job.workers.length}/{job.workersNeeded})
                 </h2>
                 <div className="space-y-3">
-                  {job.workers.map((worker, index) => (
-                    <div key={worker._id || index} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                      <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-sm">
-                        {worker.name?.charAt(0)?.toUpperCase() || 'W'}
-                      </div>
-                      <div className="flex-1">
-                        <div 
-                          className="text-gray-900 font-semibold text-sm cursor-pointer hover:text-blue-600 transition"
-                          onClick={() => navigate(`/worker/${worker._id}`)}
-                        >
-                          {worker.name}
+                  {job.workers.map((worker, index) => {
+                    // Find the worker's bid information
+                    const workerBid = job.workerBids?.find(wb => 
+                      wb.worker._id === worker._id || wb.worker === worker._id
+                    );
+                    
+                    return (
+                      <div key={worker._id || index} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                        <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-sm">
+                          {worker.name?.charAt(0)?.toUpperCase() || 'W'}
                         </div>
-                        <div className="text-gray-600 text-xs">{worker.email}</div>
-                      </div>
-                      <div className="flex gap-2">
-                        {worker.phone && (
-                          <a
-                            href={`tel:${worker.phone}`}
-                            className="bg-green-600 hover:bg-green-700 text-white px-2 py-1 rounded text-xs font-semibold transition"
-                            title="Call worker"
+                        <div className="flex-1">
+                          <div 
+                            className="text-gray-900 font-semibold text-sm cursor-pointer hover:text-blue-600 transition"
+                            onClick={() => navigate(`/worker/${worker._id}`)}
                           >
-                            📞
+                            {worker.name}
+                          </div>
+                          <div className="text-gray-600 text-xs">{worker.email}</div>
+                          {workerBid && (
+                            <div className="text-green-600 text-xs font-semibold mt-1">
+                              Bid: ${workerBid.amount}
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex gap-2">
+                          {worker.phone && (
+                            <a
+                              href={`tel:${worker.phone}`}
+                              className="bg-green-600 hover:bg-green-700 text-white px-2 py-1 rounded text-xs font-semibold transition"
+                              title="Call worker"
+                            >
+                              📞
+                            </a>
+                          )}
+                          <a
+                            href={`mailto:${worker.email}`}
+                            className="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded text-xs font-semibold transition"
+                            title="Send email"
+                          >
+                            ✉️
                           </a>
-                        )}
-                        <a
-                          href={`mailto:${worker.email}`}
-                          className="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded text-xs font-semibold transition"
-                          title="Send email"
-                        >
-                          ✉️
-                        </a>
+                          {workerBid && (
+                            <button
+                              onClick={() => showWorkerProposal(workerBid.message)}
+                              className="bg-purple-600 hover:bg-purple-700 text-white px-2 py-1 rounded text-xs font-semibold transition"
+                              title="View proposal"
+                            >
+                              📝
+                            </button>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
                 {job.workers.length < job.workersNeeded && (
                   <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
                     <p className="text-yellow-800 text-sm">
                       <span className="font-semibold">Still accepting bids:</span> {job.workersNeeded - job.workers.length} more worker{job.workersNeeded - job.workers.length !== 1 ? 's' : ''} needed
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Completed Workers with Review Option */}
+            {job.status === 'Completed' && job.workers && job.workers.length > 0 && (
+              <div className="bg-white border-b border-gray-200 pb-6 sm:pb-8 px-4 sm:px-6 pt-4 sm:pt-6 overflow-hidden">
+                <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 sm:mb-6">
+                  Completed Work ({job.workers.length}/{job.workersNeeded})
+                </h2>
+                <div className="space-y-3">
+                  {job.workers.map((worker, index) => {
+                    // Find the worker's bid information
+                    const workerBid = job.workerBids?.find(wb => 
+                      wb.worker._id === worker._id || wb.worker === worker._id
+                    );
+                    
+                    return (
+                      <div key={worker._id || index} className="flex items-center gap-3 p-3 bg-green-50 rounded-lg border border-green-200">
+                        <div className="w-10 h-10 rounded-full bg-green-600 flex items-center justify-center text-white font-bold text-sm">
+                          {worker.name?.charAt(0)?.toUpperCase() || 'W'}
+                        </div>
+                        <div className="flex-1">
+                          <div 
+                            className="text-gray-900 font-semibold text-sm cursor-pointer hover:text-blue-600 transition"
+                            onClick={() => navigate(`/worker/${worker._id}`)}
+                          >
+                            {worker.name}
+                          </div>
+                          <div className="text-gray-600 text-xs">{worker.email}</div>
+                          {workerBid && (
+                            <div className="text-green-600 text-xs font-semibold mt-1">
+                              Completed for: ${workerBid.amount}
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex gap-2">
+                          {workerBid && (
+                            <button
+                              onClick={() => showWorkerProposal(workerBid.message)}
+                              className="bg-purple-600 hover:bg-purple-700 text-white px-2 py-1 rounded text-xs font-semibold transition"
+                              title="View proposal"
+                            >
+                              📝
+                            </button>
+                          )}
+                          {isJobOwner && (
+                            <button
+                              onClick={() => openReviewModal(worker)}
+                              className="bg-yellow-600 hover:bg-yellow-700 text-white px-2 py-1 rounded text-xs font-semibold transition"
+                              title="Rate worker"
+                            >
+                              ⭐
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+                {job.workCompletedAt && (
+                  <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+                    <p className="text-green-800 text-sm">
+                      <span className="font-semibold">Work completed:</span> {formatDate(job.workCompletedAt)}
                     </p>
                   </div>
                 )}
@@ -460,28 +602,125 @@ const JobDetails = () => {
               </div>
             )}
 
+            {/* Worker Actions Section */}
+            {user && user.role === 'worker' && job.workers && job.workers.some(w => w._id === user.id || w === user.id) && (
+              <div className="bg-white border-b border-gray-200 pb-6 sm:pb-8 px-4 sm:px-6 pt-4 sm:pt-6 overflow-hidden">
+                <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 sm:mb-6">Your Work Actions</h3>
+                <div className="space-y-3 sm:space-y-4">
+                  {job.status === 'Assigned' && (
+                    <button
+                      onClick={() => handleWorkerStatusUpdate('In Progress')}
+                      disabled={updatingStatus}
+                      className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 sm:py-4 rounded-lg transition disabled:opacity-50 shadow-sm text-sm sm:text-base flex items-center justify-center gap-2"
+                    >
+                      {updatingStatus ? (
+                        <>
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                          Starting Work...
+                        </>
+                      ) : (
+                        <>
+                          🚀 Start Working
+                        </>
+                      )}
+                    </button>
+                  )}
+                  
+                  {job.status === 'In Progress' && (
+                    <div className="space-y-3">
+                      <button
+                        onClick={() => handleWorkerStatusUpdate('Completed')}
+                        disabled={updatingStatus}
+                        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 sm:py-4 rounded-lg transition disabled:opacity-50 shadow-sm text-sm sm:text-base flex items-center justify-center gap-2"
+                      >
+                        {updatingStatus ? (
+                          <>
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                            Completing...
+                          </>
+                        ) : (
+                          <>
+                            ✅ Mark as Completed
+                          </>
+                        )}
+                      </button>
+                      
+                      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                        <p className="text-yellow-800 text-sm">
+                          <strong>Work in Progress:</strong> You're currently working on this job. 
+                          Click "Mark as Completed" when you finish all the work.
+                        </p>
+                        {job.workStartedAt && (
+                          <p className="text-yellow-700 text-xs mt-2">
+                            Started: {formatDate(job.workStartedAt)}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {job.status === 'Completed' && (
+                    <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                      <p className="text-green-800 text-sm">
+                        <strong>Work Completed:</strong> Great job! This work has been marked as completed.
+                      </p>
+                      {job.workCompletedAt && (
+                        <p className="text-green-700 text-xs mt-2">
+                          Completed: {formatDate(job.workCompletedAt)}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
             {/* Status Update for Job Owner */}
             {isJobOwner && job.status !== 'Completed' && (
               <div className="bg-white border-b border-gray-200 pb-6 sm:pb-8 px-4 sm:px-6 pt-4 sm:pt-6 overflow-hidden">
-                <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 sm:mb-6">Update Status</h3>
-                <div className="space-y-2 sm:space-y-3">
-                  {job.status === 'Open' && (
+                <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 sm:mb-6">Job Management</h3>
+                <div className="space-y-3 sm:space-y-4">
+                  {job.status === 'Open' && job.workers && job.workers.length > 0 && (
                     <button
                       onClick={() => handleStatusUpdate('Assigned')}
                       disabled={updatingStatus}
-                      className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 sm:py-3 rounded-lg transition disabled:opacity-50 shadow-sm text-xs sm:text-sm"
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 sm:py-4 rounded-lg transition disabled:opacity-50 shadow-sm text-sm sm:text-base"
                     >
-                      {updatingStatus ? 'Updating...' : 'Mark as Assigned'}
+                      {updatingStatus ? 'Updating...' : 'Mark as Assigned (Workers Ready)'}
                     </button>
                   )}
+                  
                   {job.status === 'Assigned' && (
-                    <button
-                      onClick={() => handleStatusUpdate('Completed')}
-                      disabled={updatingStatus}
-                      className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2.5 sm:py-3 rounded-lg transition disabled:opacity-50 shadow-sm text-xs sm:text-sm"
-                    >
-                      {updatingStatus ? 'Updating...' : 'Mark as Completed'}
-                    </button>
+                    <div className="space-y-3">
+                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <p className="text-blue-800 text-sm">
+                          <strong>Workers Assigned:</strong> Your workers can now start working on this job.
+                          They will update the status when they begin and complete the work.
+                        </p>
+                      </div>
+                      
+                      <button
+                        onClick={() => handleStatusUpdate('Cancelled')}
+                        disabled={updatingStatus}
+                        className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 sm:py-4 rounded-lg transition disabled:opacity-50 shadow-sm text-sm sm:text-base"
+                      >
+                        {updatingStatus ? 'Cancelling...' : 'Cancel Job'}
+                      </button>
+                    </div>
+                  )}
+                  
+                  {job.status === 'In Progress' && (
+                    <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                      <p className="text-yellow-800 text-sm">
+                        <strong>Work in Progress:</strong> Your workers are currently working on this job.
+                        They will mark it as completed when they finish.
+                      </p>
+                      {job.workStartedAt && (
+                        <p className="text-yellow-700 text-xs mt-2">
+                          Work started: {formatDate(job.workStartedAt)}
+                        </p>
+                      )}
+                    </div>
                   )}
                 </div>
               </div>
@@ -793,6 +1032,49 @@ const JobDetails = () => {
               </div>
             </div>
           </div>
+        )}
+
+        {/* Proposal Modal */}
+        {showProposalModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+            <div className="bg-white rounded-lg shadow-xl p-8 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-gray-900">Worker Proposal</h2>
+                <button
+                  onClick={() => setShowProposalModal(false)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl font-bold"
+                >
+                  ×
+                </button>
+              </div>
+              
+              <div className="bg-gray-50 rounded-lg p-6">
+                <h3 className="font-semibold text-gray-900 mb-4">Proposal Details</h3>
+                <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{selectedProposal}</p>
+              </div>
+              
+              <div className="flex justify-end mt-6">
+                <button
+                  onClick={() => setShowProposalModal(false)}
+                  className="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Review Modal */}
+        {showReviewModal && selectedWorker && (
+          <ReviewModal
+            worker={selectedWorker}
+            onSubmit={handleReviewSubmit}
+            onClose={() => {
+              setShowReviewModal(false);
+              setSelectedWorker(null);
+            }}
+          />
         )}
       </div>
     </section>

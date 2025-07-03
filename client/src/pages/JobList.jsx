@@ -155,16 +155,28 @@ const JobList = () => {
                 <div className="flex gap-3 mt-auto pt-2">
                   <button
                     className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-4 py-2 rounded-lg shadow transition text-base focus:outline-none focus:ring-2 focus:ring-blue-300"
-                    onClick={() => setBidModal({ open: true, job })}
+                    onClick={() => {
+                      if (!user || user.role !== 'worker') {
+                        navigate('/login', { state: { from: `/jobs` } });
+                        return;
+                      }
+                      setBidModal({ open: true, job });
+                    }}
                   >
                     Bid
                   </button>
-                  <Link
-                    to={`/jobs/${job._id}`}
+                  <button
                     className="flex-1 bg-white border border-blue-200 text-blue-700 font-semibold px-4 py-2 rounded-lg shadow hover:bg-blue-50 transition text-base text-center focus:outline-none focus:ring-2 focus:ring-blue-200"
+                    onClick={() => {
+                      if (!user) {
+                        navigate('/login', { state: { from: `/jobs/${job._id}` } });
+                        return;
+                      }
+                      navigate(`/jobs/${job._id}`);
+                    }}
                   >
                     Details
-                  </Link>
+                  </button>
                 </div>
               </div>
             );

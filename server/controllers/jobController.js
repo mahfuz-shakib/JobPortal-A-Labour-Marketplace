@@ -61,7 +61,8 @@ exports.getJobById = async (req, res) => {
   try {
     const job = await Job.findById(req.params.id)
       .populate('client', 'name email profilePic organizationName organizationType phone location')
-      .populate('workers', 'name email');
+      .populate('workers', 'name email phone location rating')
+      .populate('workerBids.worker', 'name email phone location rating');
     if (!job) return res.status(404).json({ message: 'Job not found' });
     res.json(job);
   } catch (err) {
@@ -165,7 +166,7 @@ exports.updateJobStatus = async (req, res) => {
 // Worker updates their job status (start work, update progress, complete)
 exports.updateWorkerJobStatus = async (req, res) => {
   try {
-    const { status } = req.body;
+    const { status, progressNotes } = req.body;
     const jobId = req.params.id;
     
     // Check if the job exists and worker is assigned to it
@@ -191,12 +192,27 @@ exports.updateWorkerJobStatus = async (req, res) => {
       });
     }
     
+    // Prepare update data
+    const updateData = { status };
+    
+    // Add timestamps and notes based on status
+    if (status === 'In Progress' && !job.workStartedAt) {
+      updateData.workStartedAt = new Date();
+    } else if (status === 'Completed') {
+      updateData.workCompletedAt = new Date();
+    }
+    
+    if (progressNotes) {
+      updateData.progressNotes = progressNotes;
+    }
+    
     // Update the job status
     const updatedJob = await Job.findByIdAndUpdate(
       jobId, 
-      { status }, 
+      updateData, 
       { new: true }
-    ).populate('client', 'name email phone location organizationName organizationType');
+    ).populate('client', 'name email phone location organizationName organizationType')
+     .populate('workers', 'name email phone location rating');
     
     res.json(updatedJob);
   } catch (err) {

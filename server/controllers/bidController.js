@@ -52,37 +52,58 @@ exports.createBid = async (req, res) => {
 exports.updateBidStatus = async (req, res) => {
   try {
     const { status } = req.body; // 'Accepted' or 'Rejected'
-    const bid = await Bid.findByIdAndUpdate(req.params.bidId, { status }, { new: true });
+    const bid = await Bid.findById(req.params.bidId);
     if (!bid) return res.status(404).json({ message: 'Bid not found.' });
     
-    // If accepted, add worker to job and check if all workers are assigned
+    // Check if the user is the job owner
+    const job = await Job.findById(bid.job);
+    if (!job) return res.status(404).json({ message: 'Job not found.' });
+    
+    if (job.client.toString() !== req.user.id) {
+      return res.status(403).json({ message: 'Only the job owner can accept/reject bids.' });
+    }
+    
+    // Update bid status
+    bid.status = status;
+    await bid.save();
+    
+    // If accepted, add worker to job and preserve bid information
     if (status === 'Accepted') {
-      const job = await Job.findById(bid.job);
-      if (!job) return res.status(404).json({ message: 'Job not found.' });
-      
       // Check if worker is already assigned to this job
       if (job.workers.includes(bid.worker)) {
         return res.status(400).json({ message: 'Worker is already assigned to this job.' });
       }
       
       // Add worker to the job
-      const updatedJob = await Job.findByIdAndUpdate(
-        bid.job, 
-        { 
-          $push: { workers: bid.worker },
-          $inc: { assignedWorkersCount: 1 }
-        }, 
-        { new: true }
-      );
+      job.workers.push(bid.worker);
+      job.assignedWorkersCount = job.workers.length;
+      
+      // Preserve bid information
+      job.workerBids.push({
+        worker: bid.worker,
+        bidId: bid._id,
+        amount: bid.amount,
+        message: bid.message,
+        acceptedAt: new Date()
+      });
       
       // Check if all needed workers are assigned
-      if (updatedJob.assignedWorkersCount >= updatedJob.workersNeeded) {
-        await Job.findByIdAndUpdate(bid.job, { status: 'Assigned' });
+      if (job.assignedWorkersCount >= job.workersNeeded) {
+        job.status = 'Assigned';
       }
+      
+      await job.save();
     }
     
-    res.json(bid);
+    // Return updated job with populated data
+    const updatedJob = await Job.findById(bid.job)
+      .populate('client', 'name email phone location organizationName organizationType')
+      .populate('workers', 'name email phone location rating')
+      .populate('workerBids.worker', 'name email phone location rating');
+    
+    res.json({ bid, job: updatedJob });
   } catch (err) {
+    console.error('Error updating bid status:', err);
     res.status(500).json({ message: 'Failed to update bid status.' });
   }
 }; 

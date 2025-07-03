@@ -7,27 +7,23 @@ const Navbar = () => {
   const { user } = React.useContext(AuthContext);
   const [menuOpen, setMenuOpen] = useState(false);
 
-  // Update navItems to remove Pricing, FAQ, Dashboard
-  const navItems = [
+  // Define all possible nav items
+  const allNavItems = [
     { label: 'Home', to: '/' },
     { label: 'Jobs', to: '/jobs' },
     { label: 'Find Workers', to: '/workers' },
     { label: 'How It Works', to: '/how-it-works' },
     { label: 'Post Job', to: '/post-job', role: 'client' },
+    { label: 'Profile Card', to: '/profile-card', role: 'worker' },
   ];
 
-  // Add Profile Card nav item for workers
-  if (user && user.role === 'worker') {
-    navItems.push({ label: 'Profile Card', to: '/profile-card' });
-  }
-
-  function handleProtectedNav(to) {
-    if (!user) {
-      window.location.href = '/login';
-      return;
-    }
-    window.location.href = to;
-  }
+  // Filter nav items based on user role
+  const navItems = allNavItems.filter(item => {
+    // Always show items without role restriction
+    if (!item.role) return true;
+    // Only show role-specific items if user has that role
+    return user && user.role === item.role;
+  });
 
   return (
     <nav className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur shadow-lg">
@@ -43,7 +39,6 @@ const Navbar = () => {
               key={item.label}
               to={item.to}
               className="hover:text-blue-600 transition px-2 py-1 rounded focus:outline-none focus:ring-2 focus:ring-blue-200"
-              onClick={item.protected ? (e => { e.preventDefault(); handleProtectedNav(item.to); }) : undefined}
             >
               {item.label}
             </Link>
@@ -74,7 +69,7 @@ const Navbar = () => {
               key={item.label}
               to={item.to}
               className="block py-2 hover:text-blue-600"
-              onClick={item.protected ? (e => { e.preventDefault(); handleProtectedNav(item.to); setMenuOpen(false); }) : (() => setMenuOpen(false))}
+              onClick={() => setMenuOpen(false)}
             >
               {item.label}
             </Link>
