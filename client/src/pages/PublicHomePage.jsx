@@ -1,24 +1,23 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FaUserTie, FaUsers, FaStar, FaCheckCircle, FaQuestionCircle, FaTools, FaSearch, FaRegSmile, FaMapMarkerAlt, FaMoneyBillWave, FaTimesCircle } from 'react-icons/fa';
+import { FaUserTie, FaUsers, FaQuestionCircle, FaUserPlus, FaFileAlt, FaHandshake, FaStar, FaNetworkWired, FaUserCheck, FaSearch, FaPaperPlane, FaCheckCircle, FaChartLine } from 'react-icons/fa';
 import axios from 'axios';
-import photo1 from '../assets/img1.jpg';
 import JobCard from '../components/JobCard';
 import ProfileCard from '../components/ProfileCard';
 import BidForm from '../components/BidForm';
-import { AuthContext } from '../context/AuthContext';
 import { createApiUrl, API_ENDPOINTS } from '../config/api';
 import showNotification from '../utils/notifications';
+import { AuthContext } from '../context/AuthContext';
 
 const categories = [
-  { name: 'Electrical', icon: <FaTools /> },
-  { name: 'Plumbing', icon: <FaTools /> },
-  { name: 'Cleaning', icon: <FaRegSmile /> },
-  { name: 'Masonry', icon: <FaUserTie /> },
-  { name: 'Painting', icon: <FaStar /> },
-  { name: 'Delivery', icon: <FaTools /> },
-  { name: 'Gardening', icon: <FaSearch /> },
-  { name: 'Other', icon: <FaCheckCircle /> },
+  { name: 'Electrical', icon: '⚡' },
+  { name: 'Plumbing', icon: '🔧' },
+  { name: 'Cleaning', icon: '🧹' },
+  { name: 'Masonry', icon: '🧱' },
+  { name: 'Painting', icon: '🎨' },
+  { name: 'Delivery', icon: '🚚' },
+  { name: 'Gardening', icon: '🌱' },
+  { name: 'Other', icon: '🔧' },
 ];
 
 const faqs = [
@@ -41,24 +40,38 @@ const faqs = [
 ];
 
 const GenericHeroSection = () => (
-  <section className="w-screen relative left-1/2 right-1/2 -mx-[50vw] px-0 pt-12 pb-20 bg-blue-100">
-    <div className="max-w-7xl mx-auto px-4 sm:px-8 flex flex-col md:flex-row items-center gap-10 md:gap-20">
-      {/* Left: Text */}
-      <div className="flex-1 flex flex-col items-start justify-center text-left z-10 max-w-xl">
-        <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-blue-800 mb-6 leading-tight drop-shadow-sm">
-          Bangladesh's #1 <span className="text-blue-500">Labour Marketplace</span>
-        </h1>
-        <p className="mb-8 text-lg md:text-xl text-blue-900/80 max-w-lg font-medium">
-          Find trusted workers, post jobs, and get hired. Fast, secure, and professional—WorkMatch connects talent with opportunity.
-        </p>
-        <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-          <Link to="/register" className="bg-blue-700 hover:bg-blue-800 text-white font-semibold px-8 py-3 rounded-lg shadow-lg transition text-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2">Get Started</Link>
-          <Link to="/jobs" className="bg-white hover:bg-blue-50 text-blue-700 border border-blue-200 font-semibold px-8 py-3 rounded-lg shadow-lg transition text-lg focus:outline-none focus:ring-2 focus:ring-blue-200 focus:ring-offset-2">Browse Jobs</Link>
-        </div>
-      </div>
-      {/* Right: Illustration */}
-      <div className="flex-1 flex items-center justify-center z-10">
-        <img src={photo1} alt="Hero" className="w-full max-w-md rounded-3xl shadow-2xl border-4 border-blue-100 object-cover" />
+  <section
+    className="w-screen relative left-1/2 right-1/2 -mx-[50vw] px-0 bg-cover bg-center bg-no-repeat flex items-center justify-center min-h-[320px] sm:min-h-[520px] lg:min-h-[465px]"
+    style={{ backgroundImage: 'url(/src/assets/heroimage.jpg)' }}
+  >
+    {/* Overlay */}
+    <div className="absolute inset-0 bg-gray-800 bg-opacity-60"></div>
+    {/* Content */}
+    <div className="relative z-10 w-full max-w-4xl mx-auto px-4 text-center flex flex-col items-center">
+      <span className="inline-block bg-yellow-400 text-blue-900 font-bold rounded-full px-5 py-2 mb-6 text-base shadow-lg tracking-wide animate-pulse">
+        #1 Job Bidding Platform in Bangladesh
+      </span>
+      <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold mb-4 leading-tight drop-shadow-lg">
+        Connect with <span className="text-yellow-300">Bangladesh's</span>
+        <br />
+        <span className="text-white">Best Talent</span>
+      </h1>
+      <p className="text-lg sm:text-xl text-gray-200 mb-8 max-w-2xl mx-auto leading-relaxed drop-shadow">
+        Post jobs, find skilled workers, and get quality work done—fast, easy, and secure.
+      </p>
+      <div className="flex flex-col sm:flex-row gap-4 justify-center">
+        <Link
+          to="/register"
+          className="bg-yellow-400 text-blue-900 font-bold px-8 py-4 rounded-lg shadow-lg hover:bg-yellow-300 transition text-lg"
+        >
+          Get Started
+        </Link>
+        <Link
+          to="/how-it-works"
+          className="border-2 border-white text-white font-bold px-8 py-4 rounded-lg hover:bg-white hover:text-blue-700 transition text-lg"
+        >
+          Learn More
+        </Link>
       </div>
     </div>
   </section>
@@ -66,7 +79,6 @@ const GenericHeroSection = () => (
 
 const PublicHomePage = () => {
   const [openFaq, setOpenFaq] = useState(null);
-  const [featuredJobs, setFeaturedJobs] = useState([]);
   const [featuredWorkers, setFeaturedWorkers] = useState([]);
   const [loadingJobs, setLoadingJobs] = useState(true);
   const [loadingWorkers, setLoadingWorkers] = useState(true);
@@ -160,31 +172,149 @@ const PublicHomePage = () => {
   return (
     <main className="min-h-screen w-full flex flex-col bg-blue-50">
       <GenericHeroSection />
-      {/* How It Works */}
-      <section className="w-full max-w-6xl mx-auto py-12 px-4">
-        <h2 className="text-3xl font-bold text-blue-800 mb-8 text-center">How It Works</h2>
-        <div className="grid md:grid-cols-2 gap-10">
-          {/* For Clients */}
-          <div className="bg-white rounded-2xl shadow-lg p-8 border border-blue-100 flex flex-col gap-4">
-            <h3 className="text-xl font-bold text-blue-700 mb-2 flex items-center gap-2"><FaUserTie className="text-blue-400" /> For Clients</h3>
-            <ol className="list-decimal list-inside text-gray-700 space-y-2">
-              <li>Register and create your client profile.</li>
-              <li>Post a job with details and requirements.</li>
-              <li>Review bids from skilled workers.</li>
-              <li>Hire, chat, and track job progress.</li>
-              <li>Rate your experience and build your network.</li>
-            </ol>
+      
+      {/* How It Works - Redesigned */}
+      <section className="w-full max-w-7xl mx-auto py-16 px-4">
+        <div className="text-center mb-12">
+          <h2 className="text-4xl font-bold text-blue-800 mb-4">How It Works</h2>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">Simple steps to connect clients with skilled workers</p>
+        </div>
+
+        {/* Client Flow - First Row */}
+        <div className="mb-16">
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center gap-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-3 rounded-full font-semibold shadow-lg">
+              <FaUserTie className="text-xl" />
+              <span className="text-lg">For Clients</span>
+            </div>
           </div>
-          {/* For Workers */}
-          <div className="bg-white rounded-2xl shadow-lg p-8 border border-blue-100 flex flex-col gap-4">
-            <h3 className="text-xl font-bold text-green-700 mb-2 flex items-center gap-2"><FaUsers className="text-green-400" /> For Workers</h3>
-            <ol className="list-decimal list-inside text-gray-700 space-y-2">
-              <li>Register and complete your worker profile card.</li>
-              <li>Browse jobs and submit bids.</li>
-              <li>Get hired and communicate with clients.</li>
-              <li>Complete jobs and earn ratings.</li>
-              <li>Grow your reputation and income.</li>
-            </ol>
+          
+          <div className="relative">
+            <div className="flex items-center justify-center space-x-4 lg:space-x-6">
+              {/* Step 1 */}
+              <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl shadow-lg p-6 border-2 border-blue-200 hover:border-blue-400 hover:shadow-xl transition-all duration-300 group transform hover:-translate-y-1 w-40 lg:w-44 h-32">
+                <div className="text-center h-full flex flex-col justify-center">
+                  <div className="w-14 h-14 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform shadow-lg">
+                    <FaUserPlus className="text-2xl text-white" />
+                  </div>
+                  <h3 className="font-bold text-blue-800 text-base">Register</h3>
+                </div>
+              </div>
+
+              {/* Dotted Arrow Direction 1 */}
+              <div className="hidden md:flex items-center text-yellow-500 text-lg font-bold animate-pulse">
+                - - - - &gt;
+              </div>
+
+              {/* Step 2 */}
+              <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl shadow-lg p-6 border-2 border-blue-200 hover:border-blue-400 hover:shadow-xl transition-all duration-300 group transform hover:-translate-y-1 w-40 lg:w-44 h-32">
+                <div className="text-center h-full flex flex-col justify-center">
+                  <div className="w-14 h-14 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform shadow-lg">
+                    <FaFileAlt className="text-2xl text-white" />
+                  </div>
+                  <h3 className="font-bold text-blue-800 text-base">Post Job</h3>
+                </div>
+              </div>
+
+              {/* Dotted Arrow Direction 2 */}
+              <div className="hidden md:flex items-center text-yellow-500 text-lg font-bold animate-pulse">
+                - - - - &gt;
+              </div>
+
+              {/* Step 3 */}
+              <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl shadow-lg p-6 border-2 border-blue-200 hover:border-blue-400 hover:shadow-xl transition-all duration-300 group transform hover:-translate-y-1 w-40 lg:w-44 h-32">
+                <div className="text-center h-full flex flex-col justify-center">
+                  <div className="w-14 h-14 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform shadow-lg">
+                    <FaSearch className="text-2xl text-white" />
+                  </div>
+                  <h3 className="font-bold text-blue-800 text-base">Review Bids</h3>
+                </div>
+              </div>
+
+              {/* Dotted Arrow Direction 3 */}
+              <div className="hidden md:flex items-center text-yellow-500 text-lg font-bold animate-pulse">
+                - - - - &gt;
+              </div>
+
+              {/* Step 4 */}
+              <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl shadow-lg p-6 border-2 border-blue-200 hover:border-blue-400 hover:shadow-xl transition-all duration-300 group transform hover:-translate-y-1 w-40 lg:w-44 h-32">
+                <div className="text-center h-full flex flex-col justify-center">
+                  <div className="w-14 h-14 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform shadow-lg">
+                    <FaHandshake className="text-2xl text-white" />
+                  </div>
+                  <h3 className="font-bold text-blue-800 text-base">Hire & Track</h3>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Worker Flow - Second Row */}
+        <div>
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center gap-3 bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-3 rounded-full font-semibold shadow-lg">
+              <FaUsers className="text-xl" />
+              <span className="text-lg">For Workers</span>
+            </div>
+          </div>
+          
+          <div className="relative">
+            <div className="flex items-center justify-center space-x-4 lg:space-x-6">
+              {/* Step 1 */}
+              <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl shadow-lg p-6 border-2 border-green-200 hover:border-green-400 hover:shadow-xl transition-all duration-300 group transform hover:-translate-y-1 w-40 lg:w-44 h-32">
+                <div className="text-center h-full flex flex-col justify-center">
+                  <div className="w-14 h-14 bg-gradient-to-br from-teal-400 to-teal-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform shadow-lg">
+                    <FaUserCheck className="text-2xl text-white" />
+                  </div>
+                  <h3 className="font-bold text-green-800 text-base">Complete Profile</h3>
+                </div>
+              </div>
+
+              {/* Dotted Arrow Direction 1 */}
+              <div className="hidden md:flex items-center text-red-500 text-lg font-bold animate-pulse">
+                - - - - &gt;
+              </div>
+
+              {/* Step 2 */}
+              <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl shadow-lg p-6 border-2 border-green-200 hover:border-green-400 hover:shadow-xl transition-all duration-300 group transform hover:-translate-y-1 w-40 lg:w-44 h-32">
+                <div className="text-center h-full flex flex-col justify-center">
+                  <div className="w-14 h-14 bg-gradient-to-br from-indigo-400 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform shadow-lg">
+                    <FaSearch className="text-2xl text-white" />
+                  </div>
+                  <h3 className="font-bold text-green-800 text-base">Browse Jobs</h3>
+                </div>
+              </div>
+
+              {/* Dotted Arrow Direction 2 */}
+              <div className="hidden md:flex items-center text-red-500 text-lg font-bold animate-pulse">
+                - - - - &gt;
+              </div>
+
+              {/* Step 3 */}
+              <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl shadow-lg p-6 border-2 border-green-200 hover:border-green-400 hover:shadow-xl transition-all duration-300 group transform hover:-translate-y-1 w-40 lg:w-44 h-32">
+                <div className="text-center h-full flex flex-col justify-center">
+                  <div className="w-14 h-14 bg-gradient-to-br from-pink-400 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform shadow-lg">
+                    <FaPaperPlane className="text-2xl text-white" />
+                  </div>
+                  <h3 className="font-bold text-green-800 text-base">Submit Bids</h3>
+                </div>
+              </div>
+
+              {/* Dotted Arrow Direction 3 */}
+              <div className="hidden md:flex items-center text-red-500 text-lg font-bold animate-pulse">
+                - - - - &gt;
+              </div>
+
+              {/* Step 4 */}
+              <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl shadow-lg p-6 border-2 border-green-200 hover:border-green-400 hover:shadow-xl transition-all duration-300 group transform hover:-translate-y-1 w-40 lg:w-44 h-32">
+                <div className="text-center h-full flex flex-col justify-center">
+                  <div className="w-14 h-14 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform shadow-lg">
+                    <FaCheckCircle className="text-2xl text-white" />
+                  </div>
+                  <h3 className="font-bold text-green-800 text-base">Get Hired</h3>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -255,11 +385,37 @@ const PublicHomePage = () => {
         </div>
       </section>
       {/* Call to Action */}
-      <section className="w-full max-w-4xl mx-auto py-12 px-4 text-center">
-        <div className="bg-gradient-to-r from-blue-600 to-blue-400 rounded-2xl shadow-lg p-10">
-          <h2 className="text-3xl font-extrabold text-white mb-4">Ready to Get Started?</h2>
-          <p className="text-blue-100 mb-6 text-lg">Join WorkMatch today and connect with Bangladesh's best talent and opportunities.</p>
-          <Link to="/register" className="bg-white text-blue-700 font-bold px-8 py-3 rounded-lg shadow-lg hover:bg-blue-50 transition text-lg">Sign Up Now</Link>
+      <section className="w-screen relative left-1/2 right-1/2 -mx-[50vw] bg-gradient-to-r from-green-400 via-yellow-200 to-yellow-300 py-6 px-0 flex flex-col md:flex-row items-center justify-center overflow-hidden">
+        {/* Image */}
+        <div className="flex-1 flex justify-center items-center min-w-[180px] relative py-4">
+          {/* Decorative blurred circle behind */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-tr from-green-300 via-yellow-200 to-yellow-400 rounded-full blur-2xl opacity-60 z-0"></div>
+          {/* Gradient ring */}
+          <div className="relative z-10 bg-gradient-to-tr from-green-400 via-yellow-300 to-yellow-500 p-2 rounded-full shadow-2xl">
+            <div className="bg-white rounded-full p-4">
+              <img
+                src="/src/assets/callToAction.png"
+                alt="Get Started"
+                className="w-44 h-44 sm:w-56 sm:h-56 object-contain rounded-full shadow-lg"
+                loading="lazy"
+              />
+            </div>
+          </div>
+        </div>
+        {/* Content */}
+        <div className="flex-1 flex flex-col items-center md:items-start text-center md:text-left px-4 py-4">
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-green-900 mb-2 drop-shadow-lg">
+            Ready to Get Started?
+          </h2>
+          <p className="text-green-900 text-base sm:text-lg mb-4 max-w-xl drop-shadow">
+            Join WorkMatch today and connect with Bangladesh's best talent and opportunities.
+          </p>
+          <Link
+            to="/register"
+            className="bg-green-600 text-white font-bold px-8 py-3 rounded-full shadow-lg hover:bg-green-700 transition text-lg"
+          >
+            Sign Up Now
+          </Link>
         </div>
       </section>
     </main>

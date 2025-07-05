@@ -9,14 +9,14 @@ const ProfileCard = ({ worker, onViewProfile, onContact }) => {
       {/* Main content area grows to fill space */}
       <div className="flex-1 flex flex-col gap-4 sm:gap-5">
         {/* Top: Pic and Name side-by-side */}
-        <div className="flex flex-row items-center gap-5 sm:gap-6 w-full mb-2">
+        <div className="flex flex-row items-center gap-5 sm:gap-4 w-full mb-2">
           <img src={image} alt="Profile" className="w-14 h-14 sm:w-16 sm:h-16 rounded-full object-cover border-2 border-blue-400 shadow shrink-0" />
-          <div className="font-bold text-lg sm:text-xl md:text-2xl text-blue-800 break-words w-full text-left">{worker.name}</div>
+          <div className="font-bold text-lg sm:text-xl md:text-3xl text-black break-words w-full text-left">{worker.name}</div>
         </div>
         {/* Two-column info section, fixed width columns */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 w-full items-start">
+        <div className="grid grid-cols-2 sm:grid-cols-2 gap-4 sm:gap-4 w-full -mt-2 items-start">
           {/* Left: Location, Salary, Status, Rating */}
-          <div className="flex flex-col gap-2 sm:gap-3 justify-start h-full min-h-[60px] sm:min-h-[100px] min-w-0 sm:min-w-[160px] sm:max-w-[200px] flex-1">
+          <div className="flex flex-col gap-2 sm:gap-2 justify-start h-full min-h-[60px] sm:min-h-[100px] min-w-0 sm:min-w-[160px] sm:max-w-[200px] flex-1">
             <div className="flex items-center gap-2 text-gray-600 text-sm sm:text-base"><FaMapMarkerAlt className="text-blue-400" /> <span className="font-medium">{card.address || 'N/A'}</span></div>
             <div className="flex items-center gap-2 text-gray-600 text-sm sm:text-base"><FaMoneyBillWave className="text-green-500" /> <span className="font-medium">{card.salaryDemand ? `৳${card.salaryDemand}` : 'Not set'}</span></div>
             <div className="flex items-center gap-2 text-gray-600 text-sm sm:text-base">{card.available ? <FaCheckCircle className="text-green-500" /> : <FaTimesCircle className="text-red-400" />}<span className="font-medium">{card.available ? 'Available' : 'Not Available'}</span></div>
@@ -27,7 +27,7 @@ const ProfileCard = ({ worker, onViewProfile, onContact }) => {
             <div className="bg-pink-50 rounded-lg p-3 sm:p-4 w-full mb-1">
               <div className="text-gray-700 font-semibold mb-1 text-sm sm:text-base">Skills:</div>
               {card.skills && card.skills.length > 0 ? (
-                <ul className="flex flex-col gap-2 sm:gap-3">
+                <ul className="flex flex-col gap-1 sm:gap-2">
                   {card.skills.map(skill => (
                     <li key={skill} className="flex items-center gap-2 text-blue-700 font-medium text-sm sm:text-base bg-blue-100 px-2 py-1 rounded-full"><span className="w-2 h-2 bg-blue-400 rounded-full inline-block"></span>{skill}</li>
                   ))}
@@ -38,7 +38,7 @@ const ProfileCard = ({ worker, onViewProfile, onContact }) => {
         </div>
       </div>
       {/* Action Buttons: left (View Profile), right (Hire/Contact), always at bottom */}
-      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-5 w-full">
+      <div className="flex flex-row sm:flex-row gap-3 sm:gap-4 mt-5 w-full">
         <button
           className="flex-1 px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition shadow text-center text-base sm:text-lg order-1"
           onClick={() => onViewProfile(worker)}
