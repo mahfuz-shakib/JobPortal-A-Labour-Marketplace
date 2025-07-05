@@ -8,7 +8,8 @@ import BidForm from '../components/BidForm';
 import { createApiUrl, API_ENDPOINTS } from '../config/api';
 import showNotification from '../utils/notifications';
 import { AuthContext } from '../context/AuthContext';
-
+import heroPhoto from '../assets/HeroImage.jpg';
+import callToActionPhoto from '../assets/callToAction.png';
 const categories = [
   { name: 'Electrical', icon: '⚡' },
   { name: 'Plumbing', icon: '🔧' },
@@ -42,7 +43,7 @@ const faqs = [
 const GenericHeroSection = () => (
   <section
     className="w-screen relative left-1/2 right-1/2 -mx-[50vw] px-0 bg-cover bg-center bg-no-repeat flex items-center justify-center min-h-[320px] sm:min-h-[520px] lg:min-h-[465px]"
-    style={{ backgroundImage: 'url(/src/assets/heroimage.jpg)' }}
+    style={{ backgroundImage: {heroPhoto} }}
   >
     {/* Overlay */}
     <div className="absolute inset-0 bg-gray-800 bg-opacity-60"></div>
@@ -394,7 +395,7 @@ const PublicHomePage = () => {
           <div className="relative z-10 bg-gradient-to-tr from-green-400 via-yellow-300 to-yellow-500 p-2 rounded-full shadow-2xl">
             <div className="bg-white rounded-full p-4">
               <img
-                src="/src/assets/callToAction.png"
+                src={callToActionPhoto}
                 alt="Get Started"
                 className="w-44 h-44 sm:w-56 sm:h-56 object-contain rounded-full shadow-lg"
                 loading="lazy"
