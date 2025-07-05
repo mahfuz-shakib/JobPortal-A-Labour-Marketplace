@@ -105,14 +105,23 @@ const WorkerHomePage = () => {
         });
       } catch (err) {
         console.error('Error fetching stats:', err);
-        showNotification.error('Failed to load dashboard stats');
+        // Don't show notification for 401/403 errors (authentication issues)
+        if (err.response?.status !== 401 && err.response?.status !== 403) {
+          showNotification.error('Failed to load dashboard stats');
+        }
         // Keep default stats on error
       } finally {
         setLoadingStats(false);
       }
     };
-    fetchStats();
-  }, [user.rating]);
+    
+    // Only fetch stats if user is authenticated
+    if (user && user.id) {
+      fetchStats();
+    } else {
+      setLoadingStats(false);
+    }
+  }, [user]);
 
   useEffect(() => {
     const fetchJobs = async () => {
