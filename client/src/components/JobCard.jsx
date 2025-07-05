@@ -17,7 +17,7 @@ const JobCard = ({ job, onBid, onDetails }) => {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-xl p-2 sm:p-4 md:p-6 lg:p-8 flex flex-col border border-gray-100 hover:shadow-2xl hover:-translate-y-1 transition-all duration-200 relative group w-full max-w-lg min-h-[180px] sm:min-h-[240px] md:min-h-[300px] lg:min-h-[340px] max-h-[400px]">
+    <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 flex flex-col border border-gray-100 hover:shadow-2xl hover:-translate-y-1 transition-all duration-200 relative group w-full max-w-lg min-h-[180px] sm:min-h-[240px] md:min-h-[300px] lg:min-h-[340px] max-h-[400px]">
       {/* Main content area grows to fill space, no scrollbar */}
       <div className="flex-1 flex flex-col gap-2 sm:gap-3 md:gap-4 min-h-0">
         {/* Header: Image left, title and owner stacked right */}
@@ -35,21 +35,41 @@ const JobCard = ({ job, onBid, onDetails }) => {
             <span className="text-xs text-gray-400 italic">{client.organizationType || ''}</span>
           </div>
         </div>
+        
         {/* Job Description Preview (one line) */}
         <p className="text-gray-500 text-xs sm:text-sm md:text-base mb-1 md:mb-2 truncate">{job.description}</p>
-        {/* Job Attributes */}
-        <div className="flex flex-wrap gap-1 sm:gap-2 text-xs sm:text-sm md:text-base mb-1 md:mb-2">
-          <span className="bg-blue-100 text-blue-700 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full font-semibold">{job.location}</span>
-          <span className="bg-green-100 text-green-700 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full font-semibold">${job.budget}</span>
-          {job.workCategory && <span className="bg-purple-100 text-purple-700 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full font-semibold">{job.workCategory}</span>}
-          {job.workDuration && <span className="bg-orange-100 text-orange-700 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full font-semibold">{job.workDuration}</span>}
-          {job.workersNeeded > 0 && (
-            <span className="bg-pink-100 text-pink-700 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full font-semibold">
-              {job.workersNeeded} {job.workersNeeded === 1 ? 'worker' : 'workers'}
-            </span>
-          )}
-          {job.applicationDeadline && <span className="bg-red-100 text-red-700 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full font-semibold">Apply by: {formatDate(job.applicationDeadline)}</span>}
+        
+        {/* Two Section Layout: Left and Right */}
+        <div className="flex gap-4 mb-1 md:mb-2">
+          {/* Left Section: Location and Vacancy */}
+          <div className="flex-1 flex flex-col gap-2">
+            <div className="bg-blue-100 text-blue-700 px-3 py-2 rounded-lg font-semibold text-sm flex items-center">
+              <span className="mr-2">📍</span>
+              {job.location}
+            </div>
+            {job.workersNeeded > 0 && (
+              <div className="bg-pink-100 text-pink-700 px-3 py-2 rounded-lg font-semibold text-sm flex items-center">
+                <span className="mr-2">👥</span>
+                {job.workersNeeded} {job.workersNeeded === 1 ? 'Vacancy' : 'Vacancies'}
+              </div>
+            )}
+          </div>
+          
+          {/* Right Section: Salary and Deadline */}
+          <div className="flex-1 flex flex-col gap-2">
+            <div className="bg-green-100 text-green-700 px-3 py-2 rounded-lg font-semibold text-sm flex items-center">
+              <span className="mr-2">💰</span>
+              ${job.budget}
+            </div>
+            {job.applicationDeadline && (
+              <div className="bg-red-100 text-red-700 px-3 py-2 rounded-lg font-semibold text-sm flex items-center">
+                <span className="mr-2">⏰</span>
+                {formatDate(job.applicationDeadline)}
+              </div>
+            )}
+          </div>
         </div>
+        
         {/* Status Tag */}
         <div className="absolute top-3 sm:top-5 right-3 sm:right-5">
           <span className={`px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-xs sm:text-sm font-bold shadow-sm border border-gray-200 ${
@@ -61,6 +81,7 @@ const JobCard = ({ job, onBid, onDetails }) => {
           </span>
         </div>
       </div>
+      
       {/* Actions always at bottom */}
       <div className="flex gap-2 sm:gap-3 mt-auto pt-2">
         {onBid && (
