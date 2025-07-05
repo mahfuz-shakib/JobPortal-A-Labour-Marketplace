@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
+import { createApiUrl, API_ENDPOINTS } from '../config/api';
 
 const WorkerProfile = () => {
   const { id } = useParams();
@@ -11,7 +12,7 @@ const WorkerProfile = () => {
   useEffect(() => {
     const fetchWorker = async () => {
       try {
-        const res = await axios.get(`/api/user/worker/${id}`);
+        const res = await axios.get(createApiUrl(API_ENDPOINTS.USER_WORKER_PROFILE(id)));
         setWorker(res.data);
         // Set document title
         document.title = `${res.data.name} - Worker Profile | WorkMatch`;
@@ -34,6 +35,17 @@ const WorkerProfile = () => {
       );
     }
     return stars;
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString || dateString === '') return 'Not set';
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return 'Invalid date';
+      return date.toLocaleDateString();
+    } catch (error) {
+      return 'Invalid date';
+    }
   };
 
   if (loading) {
@@ -161,7 +173,7 @@ const WorkerProfile = () => {
                 <div>
                   <span className="text-gray-400 text-sm">Member Since</span>
                   <div className="text-white font-semibold">
-                    {new Date(worker.createdAt).toLocaleDateString()}
+                    {formatDate(worker.createdAt)}
                   </div>
                 </div>
                 <div>

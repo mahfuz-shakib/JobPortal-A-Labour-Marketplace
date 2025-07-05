@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
+import { createApiUrl, API_ENDPOINTS } from '../config/api';
 
 const AcceptedJobs = () => {
   const { user } = useContext(AuthContext);
@@ -15,7 +16,7 @@ const AcceptedJobs = () => {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const res = await axios.get('/api/jobs/accepted');
+        const res = await axios.get(createApiUrl(API_ENDPOINTS.JOBS_ACCEPTED));
         setJobs(res.data);
       } catch (err) {
         setJobs([]);
@@ -27,7 +28,14 @@ const AcceptedJobs = () => {
   }, []);
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString();
+    if (!dateString || dateString === '') return 'Not set';
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return 'Invalid date';
+      return date.toLocaleDateString();
+    } catch (error) {
+      return 'Invalid date';
+    }
   };
 
   const getStatusBadge = (status) => {
@@ -68,7 +76,7 @@ const AcceptedJobs = () => {
     setMessage('');
     
     try {
-      const res = await axios.patch(`/api/jobs/${jobId}/worker-status`, { status: newStatus });
+      const res = await axios.patch(createApiUrl(API_ENDPOINTS.JOB_WORKER_STATUS(jobId)), { status: newStatus });
       
       // Update the job in the local state
       setJobs(prevJobs => 
@@ -199,11 +207,7 @@ const AcceptedJobs = () => {
                       <div className="text-gray-500 text-xs">
                         Budget: ${job.budget} | {job.workCategory || 'Category not specified'}
                       </div>
-                      {job.deadline && (
-                        <div className="text-gray-500 text-xs">
-                          Deadline: {formatDate(job.deadline)}
-                        </div>
-                      )}
+
                     </div>
 
                     {/* Your Bid Amount */}

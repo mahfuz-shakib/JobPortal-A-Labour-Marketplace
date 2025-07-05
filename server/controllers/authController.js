@@ -30,7 +30,39 @@ exports.login = async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
     const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET || 'secret', { expiresIn: '1d' });
-    res.json({ token, user: { id: user._id, name: user.name, email: user.email, phone: user.phone, role: user.role, skill: user.skill, bio: user.bio, profilePic: user.profilePic } });
+    res.json({ 
+      token, 
+      user: { 
+        id: user._id, 
+        name: user.name, 
+        email: user.email, 
+        phone: user.phone, 
+        role: user.role, 
+        category: user.category,
+        experience: user.experience,
+        demandableBudget: user.demandableBudget,
+        rating: user.rating,
+        availability: user.availability,
+        profilePic: user.profilePic,
+        bio: user.bio,
+        location: user.location,
+        organizationType: user.organizationType,
+        organizationName: user.organizationName,
+        description: user.description,
+        profileCardCreated: user.profileCardCreated,
+        profileCard: user.profileCard
+      } 
+    });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.logout = async (req, res) => {
+  try {
+    // Since JWT is stateless, we just return success
+    // Client should remove token from localStorage
+    res.json({ message: 'Logged out successfully' });
   } catch (err) {
     res.status(500).json({ message: 'Server error' });
   }

@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
+import { createApiUrl, API_ENDPOINTS } from '../config/api';
 
 const SubmittedBids = () => {
   const { user } = useContext(AuthContext);
@@ -14,7 +15,7 @@ const SubmittedBids = () => {
   useEffect(() => {
     const fetchBids = async () => {
       try {
-        const res = await axios.get('/api/bids/my');
+        const res = await axios.get(createApiUrl(API_ENDPOINTS.BIDS_MY));
         setBids(res.data);
       } catch (err) {
         setBids([]);
@@ -26,7 +27,14 @@ const SubmittedBids = () => {
   }, []);
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString();
+    if (!dateString || dateString === '') return 'Not set';
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return 'Invalid date';
+      return date.toLocaleDateString();
+    } catch (error) {
+      return 'Invalid date';
+    }
   };
 
   const getStatusBadge = (status) => {

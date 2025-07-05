@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { createApiUrl, API_ENDPOINTS } from '../config/api';
 
 const JobPost = () => {
   const navigate = useNavigate();
@@ -9,7 +10,6 @@ const JobPost = () => {
     description: '',
     location: '',
     budget: '',
-    deadline: '',
     workCategory: '',
     workDuration: '',
     workersNeeded: 1,
@@ -44,7 +44,7 @@ const JobPost = () => {
     setMessage('');
     
     try {
-      const res = await axios.post('/api/jobs', { ...form, jobImage });
+      const res = await axios.post(createApiUrl(API_ENDPOINTS.JOBS), { ...form, jobImage });
       setMessage('Job posted successfully!');
       setTimeout(() => {
         navigate(`/jobs/${res.data._id}`);
@@ -184,38 +184,23 @@ const JobPost = () => {
               </div>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-gray-300 text-sm font-medium mb-2">
-                  Work Duration *
-                </label>
-                <input 
-                  name="workDuration" 
-                  value={form.workDuration} 
-                  onChange={handleChange} 
-                  placeholder="e.g., 2 hours, Full day, 3 days" 
-                  className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none" 
-                  required 
-                />
-              </div>
-
-              <div>
-                <label className="block text-gray-300 text-sm font-medium mb-2">
-                  Posted Date
-                </label>
-                <input 
-                  name="deadline" 
-                  value={form.deadline} 
-                  onChange={handleChange} 
-                  type="date" 
-                  className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none" 
-                />
-              </div>
+            <div>
+              <label className="block text-gray-300 text-sm font-medium mb-2">
+                Work Duration *
+              </label>
+              <input 
+                name="workDuration" 
+                value={form.workDuration} 
+                onChange={handleChange} 
+                placeholder="e.g., 2 hours, Full day, 3 days" 
+                className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none" 
+                required 
+              />
             </div>
 
             <div>
               <label className="block text-gray-300 text-sm font-medium mb-2">
-                Application Deadline
+                Application Deadline (optional)
               </label>
               <input 
                 name="applicationDeadline" 

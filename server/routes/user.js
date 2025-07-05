@@ -9,6 +9,10 @@ router.post('/profile-pic', authMiddleware, userController.uploadProfilePic);
 router.post('/delete', authMiddleware, userController.deleteAccount);
 router.post('/profile-card', authMiddleware, userController.createOrUpdateProfileCard);
 
+// Add missing routes
+router.post('/change-email', authMiddleware, userController.changeEmail);
+router.post('/change-password', authMiddleware, userController.changePassword);
+
 // List/search/filter workers
 router.get('/workers', userController.getWorkers);
 // Get public worker profile by ID

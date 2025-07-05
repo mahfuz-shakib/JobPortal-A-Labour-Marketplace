@@ -1,6 +1,12 @@
 # Dependencies
 node_modules/
 
+# Build outputs
+dist/
+dist-ssr/
+build/
+out/
+
 # Environment variables
 .env
 .env.local
@@ -14,30 +20,6 @@ config.env
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
-# Build outputs
-dist/
-build/
-out/
-
-# Database
-*.db
-*.sqlite
-*.sqlite3
-
-# Uploads and media files
-uploads/
-public/uploads/
-media/
-
-# Session store
-sessions/
-
-# SSL certificates
-*.pem
-*.key
-*.crt
-*.csr
 
 # Editor directories and files
 .vscode/
@@ -61,5 +43,27 @@ temp/
 *.tmp
 *.temp
 
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Uploads and media files
+uploads/
+public/uploads/
+media/
+
+# SSL certificates
+*.pem
+*.key
+*.crt
+*.csr
+
 # Vercel
 .vercel
+
+# Project specific
+client/dist/
+client/build/
+server/dist/
+server/build/ 

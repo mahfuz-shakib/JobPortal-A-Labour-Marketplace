@@ -9,7 +9,7 @@ const UserSchema = new mongoose.Schema({
   phone: { type: String },
   role: { type: String, enum: ['client', 'worker'], required: true },
   // Worker-specific fields
-  category: [{ type: String, required: function() { return this.role === 'worker'; } }],
+  category: [{ type: String }], // Optional for all users, can be set later
   experience: { type: String },
   demandableBudget: { type: Number },
   rating: { type: Number, default: 0 },

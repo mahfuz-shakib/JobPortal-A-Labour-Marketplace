@@ -2,6 +2,7 @@ import React, { useContext, useRef, useState } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { createApiUrl, API_ENDPOINTS } from '../config/api';
 
 const Profile = () => {
   const { user, setUser, logout } = useContext(AuthContext);
@@ -83,7 +84,7 @@ const Profile = () => {
     setSaving(true);
     setError(''); setSuccess('');
     try {
-      const res = await axios.post('/api/user/profile', {
+      const res = await axios.post(createApiUrl(API_ENDPOINTS.USER_PROFILE), {
         name: form.name,
         phone: form.phone,
         profilePic: form.profilePic,
@@ -112,7 +113,7 @@ const Profile = () => {
     setSaving(true);
     setError(''); setSuccess('');
     try {
-      const res = await axios.post('/api/user/change-email', { newEmail: emailInput });
+      const res = await axios.post(createApiUrl(API_ENDPOINTS.USER_CHANGE_EMAIL), { newEmail: emailInput });
       setUser(res.data.user);
       localStorage.setItem('user', JSON.stringify(res.data.user));
       setEmailEdit(false);
@@ -130,7 +131,7 @@ const Profile = () => {
     setSaving(true);
     setPasswordMsg('');
     try {
-      await axios.post('/api/user/change-password', passwordForm);
+      await axios.post(createApiUrl(API_ENDPOINTS.USER_CHANGE_PASSWORD), passwordForm);
       setPasswordMsg('Password updated! Please log in again.');
       setTimeout(() => { logout(); }, 2000);
     } catch (err) {
@@ -144,7 +145,7 @@ const Profile = () => {
     setSaving(true);
     setError(''); setSuccess('');
     try {
-      await axios.post('/api/user/delete', { currentPassword: deletePassword });
+      await axios.post(createApiUrl(API_ENDPOINTS.USER_DELETE), { currentPassword: deletePassword });
       setSuccess('Account deleted. Logging out...');
       setTimeout(() => {
         logout();

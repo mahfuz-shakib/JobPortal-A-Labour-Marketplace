@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
 import { useParams, Link, useNavigate } from 'react-router-dom';
+import { createApiUrl, API_ENDPOINTS } from '../config/api';
 
 const IncomingBids = () => {
   const { user } = useContext(AuthContext);
@@ -20,14 +21,14 @@ const IncomingBids = () => {
         if (jobId) {
           // Fetch bids for specific job
           const [bidsRes, jobRes] = await Promise.all([
-            axios.get(`/api/bids/job/${jobId}`),
-            axios.get(`/api/jobs/${jobId}`)
+            axios.get(createApiUrl(API_ENDPOINTS.BIDS_JOB(jobId))),
+            axios.get(createApiUrl(API_ENDPOINTS.JOB_DETAILS(jobId)))
           ]);
           setBids(bidsRes.data);
           setJob(jobRes.data);
         } else {
           // Fetch all incoming bids
-          const bidsRes = await axios.get('/api/bids/incoming');
+          const bidsRes = await axios.get(createApiUrl(API_ENDPOINTS.BIDS_INCOMING));
           setBids(bidsRes.data);
         }
       } catch (err) {
@@ -41,11 +42,11 @@ const IncomingBids = () => {
 
   const handleAcceptBid = async (bidId) => {
     try {
-      await axios.patch(`/api/bids/${bidId}/status`, { status: 'Accepted' });
+      await axios.patch(createApiUrl(API_ENDPOINTS.BID_STATUS(bidId)), { status: 'Accepted' });
       
       // Refresh job data to get updated assignment status
       if (jobId) {
-        const jobRes = await axios.get(`/api/jobs/${jobId}`);
+        const jobRes = await axios.get(createApiUrl(API_ENDPOINTS.JOB_DETAILS(jobId)));
         setJob(jobRes.data);
         
         // Show appropriate message based on assignment status
@@ -59,7 +60,7 @@ const IncomingBids = () => {
       }
       
       // Refresh bids
-      const bidsRes = await axios.get(jobId ? `/api/bids/job/${jobId}` : '/api/bids/incoming');
+      const bidsRes = await axios.get(jobId ? createApiUrl(API_ENDPOINTS.BIDS_JOB(jobId)) : createApiUrl(API_ENDPOINTS.BIDS_INCOMING));
       setBids(bidsRes.data);
     } catch (err) {
       setMessage(err.response?.data?.message || 'Failed to accept bid.');
@@ -68,10 +69,10 @@ const IncomingBids = () => {
 
   const handleRejectBid = async (bidId) => {
     try {
-      await axios.patch(`/api/bids/${bidId}/status`, { status: 'Rejected' });
+      await axios.patch(createApiUrl(API_ENDPOINTS.BID_STATUS(bidId)), { status: 'Rejected' });
       setMessage('Bid rejected successfully!');
       // Refresh bids
-      const bidsRes = await axios.get(jobId ? `/api/bids/job/${jobId}` : '/api/bids/incoming');
+      const bidsRes = await axios.get(jobId ? createApiUrl(API_ENDPOINTS.BIDS_JOB(jobId)) : createApiUrl(API_ENDPOINTS.BIDS_INCOMING));
       setBids(bidsRes.data);
     } catch (err) {
       setMessage(err.response?.data?.message || 'Failed to reject bid.');
@@ -88,7 +89,14 @@ const IncomingBids = () => {
   };
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString();
+    if (!dateString || dateString === '') return 'Not set';
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return 'Invalid date';
+      return date.toLocaleDateString();
+    } catch (error) {
+      return 'Invalid date';
+    }
   };
 
   const getRatingStars = (rating) => {

@@ -34,7 +34,7 @@ function App() {
             <Route path="/how-it-works" element={<HowItWorks />} />
             <Route path="/jobs" element={<JobList />} />
             <Route path="/post-job" element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['client']}>
                 <JobPost />
               </ProtectedRoute>
             } />
@@ -49,27 +49,27 @@ function App() {
               </ProtectedRoute>
             } />
             <Route path="/posted-jobs" element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['client']}>
                 <PostedJobs />
               </ProtectedRoute>
             } />
             <Route path="/incoming-bids" element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['client']}>
                 <IncomingBids />
               </ProtectedRoute>
             } />
             <Route path="/incoming-bids/:jobId" element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['client']}>
                 <IncomingBids />
               </ProtectedRoute>
             } />
             <Route path="/submitted-bids" element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['worker']}>
                 <SubmittedBids />
               </ProtectedRoute>
             } />
             <Route path="/accepted-jobs" element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['worker']}>
                 <AcceptedJobs />
               </ProtectedRoute>
             } />
@@ -85,7 +85,7 @@ function App() {
               </ProtectedRoute>
             } />
             <Route path="/profile-card" element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['worker']}>
                 <ProfileCardForm />
               </ProtectedRoute>
             } />

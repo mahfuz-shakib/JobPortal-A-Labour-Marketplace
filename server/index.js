@@ -11,11 +11,13 @@ const PORT = process.env.PORT || 5000;
 
 // Middleware
 // app.use(cors());
- app.use(cors(
-  {
-    origin:['http://localhost:5000','https://labour-marketplace.netlify.app/']
-  }
- ));
+app.use(cors({
+  origin: [
+    'http://localhost:5000',
+    'http://localhost:5173', // local frontend
+    'https://labour-marketplace.netlify.app' // production frontend
+  ]
+}));
 app.use(express.json({ limit: '5mb' }));
 
 
@@ -23,7 +25,7 @@ app.use(express.json({ limit: '5mb' }));
 
 // MongoDB connection
 // mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/workmatch')
-mongoose.connect(process.env.MONGO_URI)
+mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/workmatch')
 .then(() => console.log('MongoDB connected'))
 .catch((err) => console.error('MongoDB connection error:', err));
 

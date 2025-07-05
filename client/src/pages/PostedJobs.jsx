@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
+import { createApiUrl, API_ENDPOINTS } from '../config/api';
 
 const PostedJobs = () => {
   const { user } = useContext(AuthContext);
@@ -15,12 +16,12 @@ const PostedJobs = () => {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const res = await axios.get('/api/jobs/my');
+        const res = await axios.get(createApiUrl(API_ENDPOINTS.JOBS_MY));
         // Fetch bid counts for each job
         const jobsWithBidCounts = await Promise.all(
           res.data.map(async (job) => {
             try {
-              const bidsRes = await axios.get(`/api/bids/job/${job._id}`);
+              const bidsRes = await axios.get(createApiUrl(API_ENDPOINTS.BIDS_JOB(job._id)));
               return { ...job, bidCount: bidsRes.data.length };
             } catch (err) {
               return { ...job, bidCount: 0 };
@@ -43,7 +44,7 @@ const PostedJobs = () => {
     setMessage('');
     
     try {
-      await axios.delete(`/api/jobs/${deleteConfirm.jobId}`);
+      await axios.delete(createApiUrl(API_ENDPOINTS.JOB_DETAILS(deleteConfirm.jobId)));
       setJobs(jobs.filter(job => job._id !== deleteConfirm.jobId));
       setMessage('Job deleted successfully!');
       setDeleteConfirm({ show: false, jobId: null, jobTitle: '' });
@@ -72,7 +73,14 @@ const PostedJobs = () => {
   };
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString();
+    if (!dateString || dateString === '') return 'Not set';
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return 'Invalid date';
+      return date.toLocaleDateString();
+    } catch (error) {
+      return 'Invalid date';
+    }
   };
 
   return (

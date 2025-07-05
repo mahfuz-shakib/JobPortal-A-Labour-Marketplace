@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+import { createApiUrl, API_ENDPOINTS } from '../config/api';
 
 const workCategories = [
   'Cooking/Catering',
@@ -44,7 +45,7 @@ const ProfileCardForm = () => {
     // Optionally fetch existing profile card info to prefill form
     const fetchProfileCard = async () => {
       try {
-        const res = await axios.get(`/api/user/worker/${user._id}`);
+        const res = await axios.get(createApiUrl(API_ENDPOINTS.USER_WORKER_PROFILE(user._id)));
         if (res.data.profileCardCreated && res.data.profileCard) {
           setForm({
             address: res.data.profileCard.address || '',
@@ -92,10 +93,22 @@ const ProfileCardForm = () => {
 
   const handleSubmit = async e => {
     e.preventDefault();
+    
+    // Validation
+    if (!form.address.trim()) {
+      setMessage('Address is required.');
+      return;
+    }
+    
+    if (!form.skills || form.skills.length === 0) {
+      setMessage('Please select at least one skill.');
+      return;
+    }
+    
     setLoading(true);
     setMessage('');
     try {
-      await axios.post('/api/user/profile-card', form);
+      await axios.post(createApiUrl(API_ENDPOINTS.USER_PROFILE_CARD), form);
       setMessage('Profile card saved!');
       setTimeout(() => navigate('/workers'), 1200);
     } catch (err) {

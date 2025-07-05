@@ -1,5 +1,6 @@
 const Job = require('../models/Job');
 const User = require('../models/User');
+const Bid = require('../models/Bid');
 
 exports.createJob = async (req, res) => {
   try {
@@ -8,12 +9,11 @@ exports.createJob = async (req, res) => {
       description, 
       location, 
       budget, 
-      deadline,
+      applicationDeadline,
       workCategory,
       workDuration,
       workersNeeded,
       requirements,
-      applicationDeadline,
       jobImage
     } = req.body;
     
@@ -28,12 +28,11 @@ exports.createJob = async (req, res) => {
       description, 
       location, 
       budget, 
-      deadline,
+      applicationDeadline: applicationDeadline || undefined,
       workCategory,
       workDuration,
       workersNeeded: workersNeeded || 1,
       requirements,
-      applicationDeadline,
       client: clientId,
       jobImage
     });
@@ -127,7 +126,6 @@ exports.getAcceptedJobs = async (req, res) => {
     
     // For each job, get the worker's bid details
     const jobsWithBids = await Promise.all(jobs.map(async (job) => {
-      const Bid = require('../models/Bid');
       const bid = await Bid.findOne({ 
         job: job._id, 
         worker: req.user.id,

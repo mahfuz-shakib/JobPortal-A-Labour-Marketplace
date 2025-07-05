@@ -3,6 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
 import ReviewModal from '../components/ReviewModal';
+import BidForm from '../components/BidForm';
+import { createApiUrl, API_ENDPOINTS } from '../config/api';
 
 const JobDetails = () => {
   const { id } = useParams();
@@ -10,8 +12,6 @@ const JobDetails = () => {
   const { user } = useContext(AuthContext);
   const [job, setJob] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [bid, setBid] = useState({ amount: '', message: '' });
-  const [bidMsg, setBidMsg] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [updatingStatus, setUpdatingStatus] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -58,7 +58,7 @@ const JobDetails = () => {
   useEffect(() => {
     const fetchJob = async () => {
       try {
-        const res = await axios.get(`/api/jobs/${id}`);
+        const res = await axios.get(createApiUrl(API_ENDPOINTS.JOB_DETAILS(id)));
         setJob(res.data);
         setEditForm({
           title: res.data.title,
@@ -69,8 +69,7 @@ const JobDetails = () => {
           workDuration: res.data.workDuration || '',
           workersNeeded: res.data.workersNeeded || 1,
           requirements: res.data.requirements || '',
-          applicationDeadline: res.data.applicationDeadline || '',
-          deadline: res.data.deadline || ''
+          applicationDeadline: res.data.applicationDeadline || ''
         });
         setEditJobImage(res.data.jobImage);
         setEditJobImagePreview(res.data.jobImage);
@@ -82,30 +81,25 @@ const JobDetails = () => {
     fetchJob();
   }, [id]);
 
-  const handleBidChange = e => setBid(b => ({ ...b, [e.target.name]: e.target.value }));
 
-  const handleBidSubmit = async e => {
-    e.preventDefault();
+
+  const handleBidSubmit = async (bidData) => {
     setSubmitting(true);
-    setBidMsg('');
     try {
-      await axios.post('/api/bids', { 
+      await axios.post(createApiUrl(API_ENDPOINTS.BIDS), { 
         jobId: id, 
-        amount: bid.amount, 
-        message: bid.message 
+        amount: bidData.amount, 
+        message: bidData.message,
+        workDuration: bidData.workDuration
       });
-      setBidMsg('Bid submitted successfully!');
-      setBid({ amount: '', message: '' });
       // Close modal after successful submission
-      setTimeout(() => {
-        setShowBidForm(false);
-        setBidMsg('');
-      }, 2000);
+      setShowBidForm(false);
       // Refresh job data to show updated bid count
-      const res = await axios.get(`/api/jobs/${id}`);
-      setJob(res.data);
+      const jobRes = await axios.get(createApiUrl(API_ENDPOINTS.JOB_DETAILS(id)));
+      setJob(jobRes.data);
     } catch (err) {
-      setBidMsg(err.response?.data?.message || 'Failed to submit bid.');
+      console.error('Error submitting bid:', err);
+      throw err; // Let BidForm handle the error
     }
     setSubmitting(false);
   };
@@ -113,8 +107,8 @@ const JobDetails = () => {
   const handleStatusUpdate = async (newStatus) => {
     setUpdatingStatus(true);
     try {
-      const res = await axios.patch(`/api/jobs/${id}/status`, { status: newStatus });
-      setJob(res.data);
+      const statusRes = await axios.patch(createApiUrl(API_ENDPOINTS.JOB_STATUS(id)), { status: newStatus });
+      setJob(statusRes.data);
     } catch (err) {
       console.error('Error updating status:', err);
     }
@@ -124,8 +118,8 @@ const JobDetails = () => {
   const handleWorkerStatusUpdate = async (newStatus) => {
     setUpdatingStatus(true);
     try {
-      const res = await axios.patch(`/api/jobs/${id}/worker-status`, { status: newStatus });
-      setJob(res.data);
+      const workerStatusRes = await axios.patch(createApiUrl(API_ENDPOINTS.JOB_WORKER_STATUS(id)), { status: newStatus });
+      setJob(workerStatusRes.data);
     } catch (err) {
       console.error('Error updating worker status:', err);
     }
@@ -136,7 +130,7 @@ const JobDetails = () => {
     setDeleting(true);
     setDeleteMessage('');
     try {
-      await axios.delete(`/api/jobs/${id}`);
+      await axios.delete(createApiUrl(API_ENDPOINTS.JOB_DETAILS(id)));
       setDeleteMessage('Job deleted successfully!');
       setTimeout(() => {
         navigate('/posted-jobs');
@@ -156,8 +150,8 @@ const JobDetails = () => {
     setSaving(true);
     setEditMessage('');
     try {
-      const res = await axios.put(`/api/jobs/${id}`, { ...editForm, jobImage: editJobImage });
-      setJob(res.data);
+      const editRes = await axios.put(createApiUrl(API_ENDPOINTS.JOB_DETAILS(id)), { ...editForm, jobImage: editJobImage });
+      setJob(editRes.data);
       setEditing(false);
       setEditMessage('Job updated successfully!');
       setTimeout(() => setEditMessage(''), 3000);
@@ -178,13 +172,19 @@ const JobDetails = () => {
       workDuration: job.workDuration || '',
       workersNeeded: job.workersNeeded || 1,
       requirements: job.requirements || '',
-      applicationDeadline: job.applicationDeadline || '',
-      deadline: job.deadline || ''
+      applicationDeadline: job.applicationDeadline || ''
     });
   };
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString();
+    if (!dateString || dateString === '') return 'Not set';
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return 'Invalid date';
+      return date.toLocaleDateString();
+    } catch (error) {
+      return 'Invalid date';
+    }
   };
 
   const handleEditImageChange = e => {
@@ -210,7 +210,7 @@ const JobDetails = () => {
   // Review functions
   const handleReviewSubmit = async (reviewData) => {
     try {
-      await axios.post('/api/reviews', {
+      await axios.post(createApiUrl(API_ENDPOINTS.REVIEWS), {
         jobId: id,
         workerId: selectedWorker._id,
         rating: reviewData.rating,
@@ -221,8 +221,8 @@ const JobDetails = () => {
       setTimeout(() => setReviewMessage(''), 3000);
       
       // Refresh job data to show updated worker ratings
-      const res = await axios.get(`/api/jobs/${id}`);
-      setJob(res.data);
+      const reviewRes = await axios.get(createApiUrl(API_ENDPOINTS.JOB_DETAILS(id)));
+      setJob(reviewRes.data);
       
       return Promise.resolve();
     } catch (err) {
@@ -264,7 +264,7 @@ const JobDetails = () => {
   const isJobOwner = user && job.client && (job.client._id === user.id || job.client === user.id);
 
   return (
-    <section className="min-h-screen bg-gray-50">
+    <section className="min-h-screen bg-blue-50">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
         {/* Success/Error Messages */}
         {(editMessage || deleteMessage || reviewMessage) && (
@@ -567,15 +567,6 @@ const JobDetails = () => {
                     <div className="text-gray-900 font-bold text-xs sm:text-sm break-words">{formatDate(job.updatedAt)}</div>
                   </div>
                 </div>
-                {job.deadline && (
-                  <div className="flex items-start gap-2 sm:gap-3">
-                    <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-yellow-500 rounded-full mt-1.5 sm:mt-2 flex-shrink-0"></div>
-                    <div className="min-w-0 flex-1">
-                      <div className="text-gray-500 text-xs font-medium uppercase tracking-wide">Work Deadline</div>
-                      <div className="text-yellow-600 font-bold text-xs sm:text-sm break-words">{formatDate(job.deadline)}</div>
-                    </div>
-                  </div>
-                )}
                 {job.applicationDeadline && (
                   <div className="flex items-start gap-2 sm:gap-3">
                     <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-red-500 rounded-full mt-1.5 sm:mt-2 flex-shrink-0"></div>
@@ -827,33 +818,20 @@ const JobDetails = () => {
                   </div>
                 </div>
 
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-gray-700 font-semibold mb-2 text-sm">Work Duration *</label>
-                    <input
-                      name="workDuration"
-                      value={editForm.workDuration}
-                      onChange={handleEditChange}
-                      placeholder="e.g., 2 hours, Full day, 3 days"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-gray-700 font-semibold mb-2 text-sm">Deadline (if any)</label>
-                    <input
-                      name="deadline"
-                      value={editForm.deadline}
-                      onChange={handleEditChange}
-                      type="date"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
-                    />
-                  </div>
+                <div>
+                  <label className="block text-gray-700 font-semibold mb-2 text-sm">Work Duration *</label>
+                  <input
+                    name="workDuration"
+                    value={editForm.workDuration}
+                    onChange={handleEditChange}
+                    placeholder="e.g., 2 hours, Full day, 3 days"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                    required
+                  />
                 </div>
 
                 <div>
-                  <label className="block text-gray-700 font-semibold mb-2 text-sm">Application Deadline</label>
+                  <label className="block text-gray-700 font-semibold mb-2 text-sm">Application Deadline (optional)</label>
                   <input
                     name="applicationDeadline"
                     value={editForm.applicationDeadline}
@@ -872,7 +850,7 @@ const JobDetails = () => {
                     onChange={handleEditChange}
                     placeholder="Tools needed, physical requirements, safety gear, certifications, etc."
                     rows="3"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
                   />
                 </div>
 
@@ -916,94 +894,14 @@ const JobDetails = () => {
         )}
 
         {/* Bid Form Modal */}
-        {showBidForm && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-            <div className="bg-white rounded-lg shadow-xl p-8 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">Submit Your Bid</h2>
-                <button
-                  onClick={() => setShowBidForm(false)}
-                  className="text-gray-400 hover:text-gray-600 text-2xl font-bold"
-                >
-                  ×
-                </button>
-              </div>
-              
-              <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-                <h3 className="font-semibold text-gray-900 mb-2">{job.title}</h3>
-                <div className="text-sm text-gray-600">
-                  <span className="font-medium">Budget:</span> ${job.budget} | 
-                  <span className="font-medium ml-2">Location:</span> {job.location}
-                </div>
-              </div>
-
-              <form onSubmit={handleBidSubmit} className="space-y-6">
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-gray-700 font-semibold mb-2">Bid Amount ($)</label>
-                    <input 
-                      name="amount" 
-                      value={bid.amount} 
-                      onChange={handleBidChange} 
-                      placeholder="Enter your bid amount" 
-                      type="number" 
-                      min="1"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
-                      required 
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-gray-700 font-semibold mb-2">Work Duration</label>
-                    <input 
-                      name="workDuration" 
-                      value={bid.workDuration} 
-                      onChange={handleBidChange} 
-                      placeholder="How long will it take?" 
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-gray-700 font-semibold mb-2">Proposal Message</label>
-                  <textarea 
-                    name="message" 
-                    value={bid.message} 
-                    onChange={handleBidChange} 
-                    placeholder="Describe your approach, experience, and why you're the best fit for this job..." 
-                    rows="5"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
-                    required 
-                  />
-                </div>
-                
-                {bidMsg && (
-                  <div className={`text-center font-semibold p-3 rounded-lg ${
-                    bidMsg.includes('successfully') ? 'bg-green-100 text-green-800 border border-green-200' : 'bg-red-100 text-red-800 border border-red-200'
-                  }`}>
-                    {bidMsg}
-                  </div>
-                )}
-
-                <div className="flex gap-4 pt-4">
-                  <button 
-                    type="submit" 
-                    className="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg transition disabled:opacity-50" 
-                    disabled={submitting}
-                  >
-                    {submitting ? 'Submitting Bid...' : 'Submit Bid'}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setShowBidForm(false)}
-                    className="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-semibold py-3 rounded-lg transition"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        )}
+        <BidForm
+          isOpen={showBidForm}
+          onClose={() => setShowBidForm(false)}
+          onSubmit={handleBidSubmit}
+          job={job}
+          showJobInfo={true}
+          modalSize="lg"
+        />
 
         {/* Delete Confirmation Modal */}
         {deleteConfirm && (
