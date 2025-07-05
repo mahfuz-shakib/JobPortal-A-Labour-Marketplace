@@ -1,43 +1,65 @@
 import React from 'react';
+import { FaPhone, FaEnvelope, FaFacebook, FaLinkedin, FaHeart } from 'react-icons/fa';
 
 const Footer = () => (
-  <footer className="w-full bg-gradient-to-tr from-gray-900 via-gray-950 to-blue-950 border-t border-gray-800 mt-auto px-6 py-12 text-gray-300">
-    <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-10">
-      {/* About */}
-      <div>
-        <div className="text-2xl font-extrabold text-blue-400 mb-3 tracking-tight">WorkMatch</div>
-        <p className="text-gray-400 text-base leading-relaxed">WorkMatch (SkillConnect) is Bangladesh's modern job bidding platform connecting clients and skilled workers for all types of services. Simple, secure, and professional.</p>
+  <footer className="w-full bg-gray-900 text-gray-300 mt-auto">
+    <div className="max-w-6xl mx-auto px-6 py-8">
+      {/* Main Footer Content */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-6">
+        {/* Company Info */}
+        <div>
+          <h3 className="text-xl font-bold text-white mb-3">WorkMatch</h3>
+          <p className="text-gray-400 text-sm leading-relaxed">
+            Bangladesh's modern job bidding platform connecting clients and skilled workers for all types of services.
+          </p>
+        </div>
+
+        {/* Quick Links */}
+        <div>
+          <h3 className="text-lg font-semibold text-white mb-3">Quick Links</h3>
+          <ul className="space-y-2 text-sm">
+            <li><a href="/" className="hover:text-blue-400 transition-colors">Home</a></li>
+            <li><a href="/jobs" className="hover:text-blue-400 transition-colors">Browse Jobs</a></li>
+            <li><a href="/workers" className="hover:text-blue-400 transition-colors">Find Workers</a></li>
+            <li><a href="/how-it-works" className="hover:text-blue-400 transition-colors">How It Works</a></li>
+          </ul>
+        </div>
+
+        {/* Contact Info */}
+        <div>
+          <h3 className="text-lg font-semibold text-white mb-3">Contact</h3>
+          <div className="space-y-2 text-sm">
+            <div className="flex items-center gap-2">
+              <FaPhone className="text-blue-400" />
+              <a href="tel:01746172301" className="hover:text-blue-400 transition-colors">01746-172301</a>
+            </div>
+            <div className="flex items-center gap-2">
+              <FaEnvelope className="text-blue-400" />
+              <a href="mailto:mahfuzshakib301@gmail.com" className="hover:text-blue-400 transition-colors">mahfuzshakib301@gmail.com</a>
+            </div>
+            <div className="flex items-center gap-2">
+              <FaFacebook className="text-blue-400" />
+              <a href="https://www.facebook.com/mahfuz.shakib.73113528" target="_blank" rel="noopener noreferrer" className="hover:text-blue-400 transition-colors">Facebook</a>
+            </div>
+            <div className="flex items-center gap-2">
+              <FaLinkedin className="text-blue-400" />
+              <a href="https://www.linkedin.com/in/mahfuzur-rahman-09575628a/" target="_blank" rel="noopener noreferrer" className="hover:text-blue-400 transition-colors">LinkedIn</a>
+            </div>
+          </div>
+        </div>
       </div>
-      {/* Quick Links */}
-      <div>
-        <div className="font-semibold text-gray-200 mb-3 text-lg">Quick Links</div>
-        <ul className="space-y-2 text-base">
-          <li><a href="/" className="hover:text-blue-400 transition">Home</a></li>
-          <li><a href="/jobs" className="hover:text-blue-400 transition">Jobs</a></li>
-          <li><a href="/workers" className="hover:text-blue-400 transition">Find Workers</a></li>
-          <li><a href="/about" className="hover:text-blue-400 transition">About Us</a></li>
-          <li><a href="/how-it-works" className="hover:text-blue-400 transition">How It Works</a></li>
-          <li><a href="/contact" className="hover:text-blue-400 transition">Contact</a></li>
-        </ul>
-      </div>
-      {/* Contact Info */}
-      <div>
-        <div className="font-semibold text-gray-200 mb-3 text-lg">Contact</div>
-        <div className="text-base text-gray-400 mb-1">Email: <a href="mailto:support@workmatch.com" className="hover:text-blue-400 transition">support@workmatch.com</a></div>
-        <div className="text-base text-gray-400 mb-1">Phone: <a href="tel:+880123456789" className="hover:text-blue-400 transition">+880 1234-56789</a></div>
-        <div className="text-base text-gray-400">Address: Dhaka, Bangladesh</div>
-      </div>
-      {/* Social Media */}
-      <div>
-        <div className="font-semibold text-gray-200 mb-3 text-lg">Follow Us</div>
-        <div className="flex gap-5 items-center mt-1">
-          <a href="https://twitter.com/" target="_blank" rel="noopener noreferrer" className="hover:text-blue-400 transition text-2xl"><i className="fab fa-twitter"></i>Twitter</a>
-          <a href="https://linkedin.com/" target="_blank" rel="noopener noreferrer" className="hover:text-blue-400 transition text-2xl"><i className="fab fa-linkedin"></i>LinkedIn</a>
-          <a href="https://facebook.com/" target="_blank" rel="noopener noreferrer" className="hover:text-blue-400 transition text-2xl"><i className="fab fa-facebook"></i>Facebook</a>
+
+      {/* Bottom Bar */}
+      <div className="border-t border-gray-700 pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="text-sm text-gray-400">
+          &copy; {new Date().getFullYear()} WorkMatch. All rights reserved.
+        </div>
+        <div className="text-sm text-gray-400 flex items-center gap-1">
+          Made with <FaHeart className="text-red-400" /> by 
+          <span className="text-white font-medium">Mahfuzur Rahman Shakib</span>
         </div>
       </div>
     </div>
-    <div className="mt-10 border-t border-gray-800 pt-6 text-center text-gray-500 text-sm tracking-wide">&copy; {new Date().getFullYear()} WorkMatch. All rights reserved.</div>
   </footer>
 );
 
