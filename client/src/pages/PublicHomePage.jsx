@@ -43,7 +43,7 @@ const faqs = [
 const GenericHeroSection = () => (
   <section
     className="w-screen relative left-1/2 right-1/2 -mx-[50vw] px-0 bg-cover bg-center bg-no-repeat flex items-center justify-center min-h-[320px] sm:min-h-[520px] lg:min-h-[465px]"
-    style={{ backgroundImage: 'url(${heroPhoto})' }}
+    style={{ backgroundImage: `url(${heroPhoto})` }}
   >
     {/* Overlay */}
     <div className="absolute inset-0 bg-gray-800 bg-opacity-60"></div>
