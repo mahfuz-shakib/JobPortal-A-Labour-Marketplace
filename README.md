@@ -167,3 +167,8 @@ This project is for educational and demonstration purposes.
 ---
 
 *Built with ❤️ for the Bangladesh labor market community.*
+
+## Owner
+
+Mahfuzur Rahman Shakib
+
