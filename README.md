@@ -168,7 +168,15 @@ This project is for educational and demonstration purposes.
 
 *Built with ❤️ for the Bangladesh labor market community.*
 
-## Owner
+---
 
-Mahfuzur Rahman Shakib
+## 👨‍💻 Owner
+
+**Mahfuzur Rahman Shakib**
+
+- <img src="https://img.shields.io/badge/Facebook-1877F2?style=for-the-badge&logo=facebook&logoColor=white" alt="Facebook"> [https://www.facebook.com/mahfuz.shakib.73113528](https://www.facebook.com/mahfuz.shakib.73113528)
+- <img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn"> [https://www.linkedin.com/in/mahfuzur-rahman-09575628a/](https://www.linkedin.com/in/mahfuzur-rahman-09575628a/)
+- <img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"> [https://github.com/mahfuz-shakib](https://github.com/mahfuz-shakib)
+
+---
 
