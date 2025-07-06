@@ -95,10 +95,10 @@ const JobList = () => {
   if (loading) return <div className="text-center text-lg text-blue-600 font-semibold">Loading jobs...</div>;
 
   return (
-    <section className="min-h-screen w-full max-w-7xl mx-auto px-2 sm:px-4 bg-blue-50">
-      <h2 className="text-3xl font-extrabold text-blue-700 mb-8 text-center py-5">Job Listings</h2>
+    <section className="min-h-screen w-full max-w-7xl flex flex-col items-center text-gray-900 mx-auto px-2 py-4 sm:px-4 bg-blue-50">
+      <h2 className="text-3xl font-bold mb-6 text-center py-6">Job Listings</h2>
       {/* Modern Filter Bar */}
-      <div className="flex justify-center mb-10">
+      <div className="flex justify-center -mt-3 mb-10">
         <div className="flex flex-col sm:flex-row items-center gap-4 w-full max-w-2xl bg-gray-50 rounded-2xl shadow-lg px-6 py-4 border border-gray-200">
           {/* Search Box */}
           <div className="flex items-center flex-1 bg-white rounded-lg px-4 py-2 shadow-sm border border-gray-200 focus-within:ring-2 focus-within:ring-blue-200 transition">

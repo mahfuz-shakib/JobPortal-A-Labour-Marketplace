@@ -11,6 +11,8 @@ const PostedJobs = () => {
   const [deleting, setDeleting] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState({ show: false, jobId: null, jobTitle: '' });
   const [message, setMessage] = useState('');
+  const [sortBy, setSortBy] = useState('createdAt');
+  const [sortOrder, setSortOrder] = useState('desc');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -63,12 +65,32 @@ const PostedJobs = () => {
     setDeleteConfirm({ show: false, jobId: null, jobTitle: '' });
   };
 
-  const getStatusColor = (status) => {
+  const getStatusConfig = (status) => {
     switch (status) {
-      case 'Open': return 'bg-green-100 text-green-800';
-      case 'Assigned': return 'bg-blue-100 text-blue-800';
-      case 'Completed': return 'bg-gray-100 text-gray-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'Open':
+        return {
+          color: 'bg-emerald-100 text-emerald-800 border-emerald-200',
+          icon: '🟢',
+          bg: 'bg-emerald-50'
+        };
+      case 'Assigned':
+        return {
+          color: 'bg-blue-100 text-blue-800 border-blue-200',
+          icon: '🔵',
+          bg: 'bg-blue-50'
+        };
+      case 'Completed':
+        return {
+          color: 'bg-gray-100 text-gray-800 border-gray-200',
+          icon: '✅',
+          bg: 'bg-gray-50'
+        };
+      default:
+        return {
+          color: 'bg-gray-100 text-gray-800 border-gray-200',
+          icon: '⚪',
+          bg: 'bg-gray-50'
+        };
     }
   };
 
@@ -77,136 +99,333 @@ const PostedJobs = () => {
     try {
       const date = new Date(dateString);
       if (isNaN(date.getTime())) return 'Invalid date';
-      return date.toLocaleDateString();
+      return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      });
     } catch (error) {
       return 'Invalid date';
     }
   };
 
+  const isDeadlineNear = (deadline) => {
+    if (!deadline) return false;
+    const deadlineDate = new Date(deadline);
+    const today = new Date();
+    const diffTime = deadlineDate - today;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays <= 3 && diffDays >= 0;
+  };
+
+  const isDeadlineExpired = (deadline) => {
+    if (!deadline) return false;
+    const deadlineDate = new Date(deadline);
+    const today = new Date();
+    return deadlineDate < today;
+  };
+
+  // Sort function
+  const sortJobs = (jobsToSort) => {
+    return [...jobsToSort].sort((a, b) => {
+      let aValue, bValue;
+
+      switch (sortBy) {
+        case 'title':
+          aValue = a.title?.toLowerCase() || '';
+          bValue = b.title?.toLowerCase() || '';
+          break;
+        case 'status':
+          aValue = a.status || '';
+          bValue = b.status || '';
+          break;
+        case 'budget':
+          aValue = parseFloat(a.budget) || 0;
+          bValue = parseFloat(b.budget) || 0;
+          break;
+        case 'bidCount':
+          aValue = a.bidCount || 0;
+          bValue = b.bidCount || 0;
+          break;
+        case 'applicationDeadline':
+          aValue = a.applicationDeadline ? new Date(a.applicationDeadline).getTime() : 0;
+          bValue = b.applicationDeadline ? new Date(b.applicationDeadline).getTime() : 0;
+          break;
+        case 'createdAt':
+        default:
+          aValue = new Date(a.createdAt).getTime();
+          bValue = new Date(b.createdAt).getTime();
+          break;
+      }
+
+      if (sortOrder === 'asc') {
+        return aValue > bValue ? 1 : -1;
+      } else {
+        return aValue < bValue ? 1 : -1;
+      }
+    });
+  };
+
+  const handleSort = (newSortBy) => {
+    if (sortBy === newSortBy) {
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortBy(newSortBy);
+      setSortOrder('desc');
+    }
+  };
+
+  const getSortedJobs = () => {
+    return sortJobs(jobs);
+  };
+
   return (
-    <section className="min-h-screen bg-gray-900 text-gray-100 px-4 py-8">
-      <div className="max-w-6xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">Your Posted Jobs</h1>
-          <p className="text-gray-400">Manage and track your posted labor jobs</p>
+    <section className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 text-gray-900 px-4 py-8">
+      <div className="max-w-7xl mx-auto">
+        {/* Header Section */}
+        <div className="mb-8 text-left">
+          <h1 className="text-4xl font-bold text-gray-900 mb-3">Your Posted Jobs</h1>
+          {/* <p className="text-gray-600 text-lg">Manage and track your labor job postings</p> */}
         </div>
 
+        {/* Stats Summary */}
+        {jobs.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+            <div className="bg-red-50 rounded-xl p-6 shadow-sm border border-yellow-200">
+              <div className="flex items-center">
+                <div className="p-2 bg-blue-100 rounded-lg">
+                  <span className="text-2xl">📋</span>
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm text-gray-600">Total Jobs</p>
+                  <p className="text-2xl font-bold text-gray-900">{jobs.length}</p>
+                </div>
+              </div>
+            </div>
+            <div className="bg-red-50 rounded-xl p-6 shadow-sm border border-gray-200">
+              <div className="flex items-center">
+                <div className="p-2 bg-emerald-100 rounded-lg">
+                  <span className="text-2xl">🟢</span>
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm text-gray-600">Open</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {jobs.filter(job => job.status === 'Open').length}
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="bg-red-50 rounded-xl p-6 shadow-sm border border-gray-200">
+              <div className="flex items-center">
+                <div className="p-2 bg-blue-100 rounded-lg">
+                  <span className="text-2xl">🔵</span>
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm text-gray-600">Assigned</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {jobs.filter(job => job.status === 'Assigned').length}
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="bg-red-50 rounded-xl p-6 shadow-sm border border-gray-200">
+              <div className="flex items-center">
+                <div className="p-2 bg-gray-100 rounded-lg">
+                  <span className="text-2xl">✅</span>
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm text-gray-600">Completed</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {jobs.filter(job => job.status === 'Completed').length}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {message && (
-          <div className={`mb-4 p-4 rounded-lg font-semibold ${
-            message.includes('successfully') ? 'bg-green-900 text-green-300' : 'bg-red-900 text-red-300'
+          <div className={`mb-6 p-4 rounded-xl font-semibold shadow-sm ${
+            message.includes('successfully') 
+              ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' 
+              : 'bg-red-50 text-red-800 border border-red-200'
           }`}>
             {message}
           </div>
         )}
 
-        {loading ? (
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-            <div className="text-gray-300">Loading your jobs...</div>
-          </div>
-        ) : jobs.length === 0 ? (
-          <div className="text-center">
-            <div className="text-gray-400 text-xl mb-4">You have not posted any jobs yet.</div>
-            <Link 
-              to="/post-job"
-              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg transition"
-            >
-              Post Your First Job
-            </Link>
-          </div>
-        ) : (
-          <div className="bg-gray-800 rounded-xl overflow-hidden border border-gray-700">
-            {/* Header */}
-            <div className="bg-gray-700 px-6 py-4 border-b border-gray-600">
-              <div className="grid grid-cols-4 gap-4 text-sm font-semibold text-gray-300">
-                <div>Posted Date</div>
-                <div>Job Details</div>
-                <div>Application Deadline</div>
-                <div>Incoming Bids</div>
+        {/* Sort Controls */}
+        {jobs.length > 0 && (
+          <div className="mb-6 bg-white rounded-xl p-4 shadow-sm border border-gray-200">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div className="flex items-center">
+                <span className="text-sm font-semibold text-gray-700 mr-3">Sort by:</span>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    { key: 'createdAt', label: 'New/Old', icon: '🆕' },
+                    { key: 'title', label: 'Job Title', icon: '📝' },
+                    { key: 'status', label: 'Status', icon: '🏷️' },
+                    { key: 'budget', label: 'Budget', icon: '💰' },
+                    { key: 'bidCount', label: 'Bids', icon: '📨' },
+                    { key: 'applicationDeadline', label: 'Deadline', icon: '⏰' }
+                  ].map(({ key, label, icon }) => (
+                    <button
+                      key={key}
+                      onClick={() => handleSort(key)}
+                      className={`flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                        sortBy === key
+                          ? 'bg-blue-100 text-blue-700 border border-blue-200'
+                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200 border border-gray-200'
+                      }`}
+                    >
+                      <span className="mr-1">{icon}</span>
+                      {label}
+                      {sortBy === key && (
+                        <span className="ml-1 text-xs">
+                          {sortOrder === 'asc' ? '↑' : '↓'}
+                        </span>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="text-sm text-gray-500">
+                {jobs.length} job{jobs.length !== 1 ? 's' : ''} found
               </div>
             </div>
+          </div>
+        )}
 
-            {/* Job List */}
-            <div className="divide-y divide-gray-700">
-              {jobs.map(job => (
-                <div key={job._id} className="px-6 py-4 hover:bg-gray-750 transition-colors">
-                  <div className="grid grid-cols-4 gap-4 items-center">
-                    {/* Left: Posting Date */}
-                    <div className="text-sm text-gray-400">
-                      {formatDate(job.createdAt)}
+        {loading ? (
+          <div className="text-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+            <div className="text-gray-600 text-lg">Loading your jobs...</div>
+          </div>
+        ) : jobs.length === 0 ? (
+          <div className="text-center py-12">
+            <div className="bg-white rounded-2xl p-12 shadow-sm border border-gray-200 max-w-md mx-auto">
+              <div className="text-6xl mb-4">📝</div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">No Jobs Posted Yet</h3>
+              <p className="text-gray-600 mb-6">Start by posting your first labor job to find skilled workers.</p>
+              <Link 
+                to="/post-job"
+                className="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-colors shadow-sm"
+              >
+                <span className="mr-2">➕</span>
+                Post Your First Job
+              </Link>
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+            {getSortedJobs().map(job => {
+              const statusConfig = getStatusConfig(job.status);
+              const deadlineNear = isDeadlineNear(job.applicationDeadline);
+              const deadlineExpired = isDeadlineExpired(job.applicationDeadline);
+              
+              return (
+                <div key={job._id} className={`bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-all duration-200 ${statusConfig.bg}`}>
+                  {/* Header */}
+                  <div className="p-6 border-b border-gray-100">
+                    <div className="flex items-start justify-between mb-3">
+                      <h3 className="text-lg font-semibold text-gray-900 leading-tight pr-2">
+                        {job.title}
+                      </h3>
+                      <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${statusConfig.color} flex items-center`}>
+                        <span className="mr-1">{statusConfig.icon}</span>
+                        {job.status}
+                      </span>
+                    </div>
+                    
+                    <div className="flex items-center text-sm text-gray-600 mb-3">
+                      <span className="mr-4">📅 Posted: {formatDate(job.createdAt)}</span>
                     </div>
 
-                    {/* Middle-Left: Job Title, Status, Details Button */}
-                    <div className="space-y-2">
-                      <h3 className="text-white font-semibold text-sm leading-tight">{job.title}</h3>
-                      <div className="flex items-center gap-2">
-                        <span className={`px-2 py-1 rounded-full text-xs font-semibold ${getStatusColor(job.status)}`}>
-                          {job.status}
+                    {job.applicationDeadline && (
+                      <div className={`flex items-center text-sm ${
+                        deadlineExpired ? 'text-red-600' : 
+                        deadlineNear ? 'text-orange-600' : 'text-gray-600'
+                      }`}>
+                        <span className="mr-1">⏰</span>
+                        <span className="font-medium">
+                          {deadlineExpired ? 'Deadline Expired' : 'Deadline'}: {formatDate(job.applicationDeadline)}
                         </span>
-                        <Link
-                          to={`/jobs/${job._id}`}
-                          className="text-blue-400 hover:text-blue-300 text-xs font-medium transition"
-                        >
-                          View Details
-                        </Link>
-                        <button
-                          onClick={() => confirmDelete(job._id, job.title)}
-                          className="text-red-400 hover:text-red-300 text-xs font-medium transition"
-                        >
-                          Delete
-                        </button>
                       </div>
-                    </div>
+                    )}
+                  </div>
 
-                    {/* Middle-Right: Application Deadline */}
-                    <div className="text-sm">
-                      {job.applicationDeadline ? (
-                        <span className="text-red-400 font-medium">
-                          {formatDate(job.applicationDeadline)}
-                        </span>
-                      ) : (
-                        <span className="text-gray-500">No deadline</span>
-                      )}
-                    </div>
-
-                    {/* Right: Number of Incoming Bids */}
-                    <div className="text-center">
+                  {/* Content */}
+                  <div className="p-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center">
+                        <span className="text-2xl mr-3">💰</span>
+                        <div>
+                          <p className="text-sm text-gray-600">Budget</p>
+                          <p className="font-semibold text-gray-900">${job.budget}</p>
+                        </div>
+                      </div>
+                      
                       <Link
                         to={`/incoming-bids/${job._id}`}
-                        className="inline-flex items-center justify-center w-8 h-8 bg-blue-600 hover:bg-blue-700 text-white rounded-full text-sm font-bold transition"
+                        className={`inline-flex items-center justify-center px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
+                          job.bidCount > 0 
+                            ? 'bg-blue-600 hover:bg-blue-700 text-white' 
+                            : 'bg-gray-100 text-gray-600'
+                        }`}
                         title={`View ${job.bidCount} bid${job.bidCount !== 1 ? 's' : ''}`}
                       >
-                        {job.bidCount}
+                        <span className="mr-1">📨</span>
+                        {job.bidCount} Bid{job.bidCount !== 1 ? 's' : ''}
                       </Link>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex gap-2">
+                      <Link
+                        to={`/jobs/${job._id}`}
+                        className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2 px-4 rounded-lg text-center transition-colors"
+                      >
+                        👁️ View Details
+                      </Link>
+                      <button
+                        onClick={() => confirmDelete(job._id, job.title)}
+                        className="px-4 py-2 bg-red-100 hover:bg-red-200 text-red-700 font-semibold rounded-lg transition-colors"
+                        title="Delete job"
+                      >
+                        🗑️
+                      </button>
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
+              );
+            })}
           </div>
         )}
 
         {/* Delete Confirmation Modal */}
         {deleteConfirm.show && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-            <div className="bg-gray-800 rounded-xl p-6 w-full max-w-md border border-gray-700">
-              <h3 className="text-xl font-bold text-white mb-4">Confirm Delete</h3>
-              <p className="text-gray-300 mb-6">
-                Are you sure you want to delete "<span className="text-white font-semibold">{deleteConfirm.jobTitle}</span>"? 
-                This action cannot be undone.
-              </p>
+            <div className="bg-white rounded-2xl p-8 w-full max-w-md shadow-xl border border-gray-200">
+              <div className="text-center mb-6">
+                <div className="text-6xl mb-4">⚠️</div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">Confirm Delete</h3>
+                <p className="text-gray-600">
+                  Are you sure you want to delete "<span className="text-gray-900 font-semibold">{deleteConfirm.jobTitle}</span>"? 
+                  This action cannot be undone.
+                </p>
+              </div>
               <div className="flex gap-3">
                 <button
                   onClick={handleDelete}
                   disabled={deleting}
-                  className="bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded transition disabled:opacity-50"
+                  className="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-4 rounded-xl transition-colors disabled:opacity-50"
                 >
-                  {deleting ? 'Deleting...' : 'Delete Job'}
+                  {deleting ? '🗑️ Deleting...' : '🗑️ Delete Job'}
                 </button>
                 <button
                   onClick={cancelDelete}
                   disabled={deleting}
-                  className="bg-gray-600 hover:bg-gray-700 text-white font-semibold px-4 py-2 rounded transition"
+                  className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 px-4 rounded-xl transition-colors"
                 >
                   Cancel
                 </button>

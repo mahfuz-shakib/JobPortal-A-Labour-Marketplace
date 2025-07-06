@@ -87,7 +87,7 @@ const WorkerProfile = () => {
         {/* Page Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-white mb-2">Worker Profile</h1>
-          <p className="text-gray-400">View detailed information about this worker</p>
+          {/* <p className="text-gray-400">View detailed information about this worker</p> */}
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8">
@@ -235,29 +235,6 @@ const WorkerProfile = () => {
                 >
                   ✉️ Send Email
                 </a>
-              </div>
-            </div>
-
-            {/* Quick Stats */}
-            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-              <h3 className="text-xl font-bold text-white mb-4">Quick Stats</h3>
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-400">Rating</span>
-                  <span className="text-white font-semibold">{worker.rating || 0}/5</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-400">Status</span>
-                  <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                    worker.availability ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                  }`}>
-                    {worker.availability ? 'Available' : 'Unavailable'}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-400">Skills</span>
-                  <span className="text-white font-semibold">{worker.category?.length || 0}</span>
-                </div>
               </div>
             </div>
 
