@@ -4,9 +4,8 @@ const mongoose = require('mongoose');
 
 const UserSchema = new mongoose.Schema({
   name: { type: String, required: true },
-  email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  phone: { type: String },
+  phone: { type: String, required: true, unique: true },
   role: { type: String, enum: ['client', 'worker'], required: true },
   // Worker-specific fields
   category: [{ type: String }], // Optional for all users, can be set later

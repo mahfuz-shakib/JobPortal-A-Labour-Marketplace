@@ -288,7 +288,7 @@ const JobDetails = () => {
               
               <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs sm:text-sm">
                 <span className="bg-blue-100 text-blue-800 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full font-semibold text-xs sm:text-sm whitespace-nowrap">
-                  ${job.budget}
+                  ৳{job.budget}
                 </span>
                 <span className="text-gray-500 bg-gray-100 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs sm:text-sm whitespace-nowrap">📍 {job.location}</span>
                 <span className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded-full font-semibold text-xs sm:text-sm whitespace-nowrap ${
@@ -328,7 +328,7 @@ const JobDetails = () => {
                 <div className="space-y-4 sm:space-y-5">
                   <div>
                     <span className="text-gray-500 text-xs font-medium uppercase tracking-wide">Salary</span>
-                    <p className="text-gray-900 font-semibold text-sm sm:text-base mt-1 break-words">${job.budget}</p>
+                    <p className="text-gray-900 font-semibold text-sm sm:text-base mt-1 break-words">৳{job.budget}</p>
                   </div>
                   <div>
                     <span className="text-gray-500 text-xs font-medium uppercase tracking-wide">Work Duration</span>
@@ -388,7 +388,7 @@ const JobDetails = () => {
                           <div className="text-gray-600 text-xs">{worker.email}</div>
                           {workerBid && (
                             <div className="text-green-600 text-xs font-semibold mt-1">
-                              Bid: ${workerBid.amount}
+                              ৳{workerBid.amount}
                             </div>
                           )}
                         </div>
@@ -461,7 +461,7 @@ const JobDetails = () => {
                           <div className="text-gray-600 text-xs">{worker.email}</div>
                           {workerBid && (
                             <div className="text-green-600 text-xs font-semibold mt-1">
-                              Completed for: ${workerBid.amount}
+                              ৳{workerBid.amount}
                             </div>
                           )}
                         </div>
@@ -774,7 +774,7 @@ const JobDetails = () => {
                   </div>
 
                   <div>
-                    <label className="block text-gray-700 font-semibold mb-2 text-sm">Budget ($) *</label>
+                    <label className="block text-gray-700 font-semibold mb-2 text-sm">Budget (৳) *</label>
                     <input
                       name="budget"
                       value={editForm.budget}

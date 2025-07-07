@@ -282,7 +282,7 @@ const SubmittedBids = () => {
                           <span className="mr-4">📍 {bid.job?.location || 'Location not specified'}</span>
                         </div>
                         <div className="flex items-center text-sm text-gray-600">
-                          <span className="mr-4">💵 Budget: ${bid.job?.budget || 'Not specified'}</span>
+                          <span className="mr-4">💵 Budget: ৳{bid.job?.budget || 'Not specified'}</span>
                         </div>
                       </div>
                       <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${statusConfig.color} flex items-center`}>
@@ -299,7 +299,7 @@ const SubmittedBids = () => {
                         <span className="text-2xl mr-3">💰</span>
                         <div>
                           <p className="text-sm text-gray-600">Your Bid</p>
-                          <p className="text-xl font-bold text-gray-900">${bid.amount}</p>
+                          <p className="text-xl font-bold text-gray-900">৳{bid.amount}</p>
                         </div>
                       </div>
                       

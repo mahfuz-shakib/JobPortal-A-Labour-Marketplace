@@ -59,7 +59,7 @@ const JobCard = ({ job, onBid, onDetails }) => {
           <div className="flex-1 flex flex-col gap-2">
             <div className="bg-green-50 text-green-700 px-3 py-2 rounded-lg font-semibold text-sm flex items-center">
               <span className="mr-2">💰</span>
-              ${job.budget}
+              ৳{job.budget}
             </div>
             {job.applicationDeadline && (
               <div className="bg-red-50 text-red-700 px-3 py-2 rounded-lg font-semibold text-sm flex items-center">

@@ -40,7 +40,6 @@ const Dashboard = () => {
           <h3 className="text-lg font-semibold text-gray-700 mb-2">Account Overview</h3>
           <div className="flex flex-col gap-2 text-gray-600">
             <div><span className="font-semibold">Role:</span> <span className="capitalize">{user.role}</span></div>
-            <div><span className="font-semibold">Email:</span> {user.email}</div>
             <div><span className="font-semibold">Phone:</span> {user.phone}</div>
           </div>
         </div>

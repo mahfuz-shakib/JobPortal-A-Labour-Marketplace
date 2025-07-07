@@ -4,7 +4,7 @@ const Job = require('../models/Job');
 // Get all bids for a specific job (for clients)
 exports.getBidsForJob = async (req, res) => {
   try {
-    const bids = await Bid.find({ job: req.params.jobId }).populate('worker', 'name email phone location experience category rating bio profilePic');
+    const bids = await Bid.find({ job: req.params.jobId }).populate('worker', 'name phone location experience category rating bio profilePic');
     res.json(bids);
   } catch (err) {
     res.status(500).json({ message: 'Failed to fetch bids.' });
@@ -27,7 +27,7 @@ exports.getBidsForClientJobs = async (req, res) => {
     // Find jobs posted by this client
     const jobs = await Job.find({ client: req.user.id });
     const jobIds = jobs.map(j => j._id);
-    const bids = await Bid.find({ job: { $in: jobIds } }).populate('worker', 'name email phone location experience category rating bio profilePic').populate('job', 'title');
+    const bids = await Bid.find({ job: { $in: jobIds } }).populate('worker', 'name phone location experience category rating bio profilePic').populate('job', 'title');
     res.json(bids);
   } catch (err) {
     res.status(500).json({ message: 'Failed to fetch incoming bids.' });
@@ -97,9 +97,9 @@ exports.updateBidStatus = async (req, res) => {
     
     // Return updated job with populated data
     const updatedJob = await Job.findById(bid.job)
-      .populate('client', 'name email phone location organizationName organizationType')
-      .populate('workers', 'name email phone location rating')
-      .populate('workerBids.worker', 'name email phone location rating');
+      .populate('client', 'name phone location organizationName organizationType')
+      .populate('workers', 'name phone location rating')
+      .populate('workerBids.worker', 'name phone location rating');
     
     res.json({ bid, job: updatedJob });
   } catch (err) {

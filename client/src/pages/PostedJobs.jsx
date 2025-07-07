@@ -361,7 +361,7 @@ const PostedJobs = () => {
                         <span className="text-2xl mr-3">💰</span>
                         <div>
                           <p className="text-sm text-gray-600">Budget</p>
-                          <p className="font-semibold text-gray-900">${job.budget}</p>
+                          <p className="font-semibold text-gray-900">৳{job.budget}</p>
                         </div>
                       </div>
                       

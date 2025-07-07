@@ -1,40 +1,9 @@
 import React from 'react';
-import { FaMapMarkerAlt, FaMoneyBillWave, FaCheckCircle, FaTimesCircle, FaStar, FaEnvelope } from 'react-icons/fa';
+import { FaMapMarkerAlt, FaMoneyBillWave, FaCheckCircle, FaTimesCircle, FaStar } from 'react-icons/fa';
 
-const ProfileCard = ({ worker, onViewProfile, onContact }) => {
+const ProfileCard = ({ worker, onViewProfile }) => {
   const card = worker.profileCard || {};
   const image = card.profileImage || worker.profilePic || '/public/images/default-profile.png';
-
-  const handleContact = () => {
-    // Create email content
-    const subject = `Job Opportunity - Interested in hiring ${worker.name}`;
-    const body = `Dear ${worker.name},
-
-I hope this email finds you well. I came across your profile on our labor marketplace and I'm interested in discussing a potential job opportunity with you.
-
-Worker Details:
-- Name: ${worker.name}
-- Location: ${card.address || 'N/A'}
-- Skills: ${card.skills ? card.skills.join(', ') : 'N/A'}
-- Rating: ${worker.rating?.toFixed(1) || '0.0'}
-- Available: ${card.available ? 'Yes' : 'No'}
-
-Please let me know if you're available for a discussion about this opportunity.
-
-Best regards,
-[Your Name]`;
-
-    // Create mailto link
-    const mailtoLink = `mailto:${worker.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    
-    // Open email client
-    window.open(mailtoLink, '_blank');
-    
-    // Also call the original onContact function if provided
-    if (onContact) {
-      onContact(worker);
-    }
-  };
 
   return (
     <div className="w-full max-w-full sm:max-w-lg bg-cyan-50 rounded-2xl shadow-xl p-5 sm:p-7 flex flex-col border border-gray-100 hover:shadow-2xl transition-all duration-200 relative mx-auto min-h-[220px] sm:min-h-[220px] h-full">
@@ -77,14 +46,15 @@ Best regards,
         >
           View Profile
         </button>
-        <button
-          className="flex-1 px-4 py-2 rounded-lg bg-green-600 text-white font-semibold hover:bg-green-700 transition shadow text-center text-base sm:text-lg order-2 flex items-center justify-center gap-2"
-          onClick={handleContact}
-          title={`Send email to ${worker.name} at ${worker.email}`}
-        >
-          <FaEnvelope className="text-sm" />
-          Hire / Contact
-        </button>
+        {worker.phone && (
+          <a
+            href={`tel:${worker.phone}`}
+            className="flex-1 px-4 py-2 rounded-lg bg-green-600 text-white font-semibold hover:bg-green-700 transition shadow text-center text-base sm:text-lg order-2 flex items-center justify-center gap-2"
+            title={`Call ${worker.name}`}
+          >
+            📞 Call
+          </a>
+        )}
       </div>
     </div>
   );

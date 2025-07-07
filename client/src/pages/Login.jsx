@@ -4,7 +4,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import loginImage from '../assets/login.jpeg';
 
 const Login = () => {
-  const [form, setForm] = useState({ email: '', password: '' });
+  const [form, setForm] = useState({ phone: '', password: '' });
   const [message, setMessage] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const { user, login } = useContext(AuthContext);
@@ -26,11 +26,15 @@ const Login = () => {
     setLoading(true);
     setMessage('');
     try {
-      await login(form.email, form.password);
+      if (!/^01\d{9}$/.test(form.phone)) {
+        setMessage('Please enter a valid phone number (Format: 01xxxxxxxxx)');
+        return;
+      }
+      await login(form.phone, form.password);
       setMessage('Login successful!');
     } catch (err) {
       if (err.message === 'Invalid credentials') {
-        setMessage('Email not registered or password is incorrect.');
+        setMessage('Phone not registered or password is incorrect.');
       } else {
         setMessage(err.message);
       }
@@ -81,9 +85,10 @@ const Login = () => {
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2" htmlFor="email">
-                  Email Address
+                <label className="block text-sm font-semibold text-gray-700 mb-2" htmlFor="phone">
+                  Phone Number
                 </label>
+                <p className="text-xs text-gray-500 mb-2">Format: 01xxxxxxxxx</p>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -91,12 +96,12 @@ const Login = () => {
                     </svg>
                   </div>
                   <input 
-                    name="email" 
-                    id="email" 
-                    value={form.email} 
+                    name="phone" 
+                    id="phone" 
+                    value={form.phone} 
                     onChange={handleChange} 
-                    placeholder="Enter your email" 
-                    type="email" 
+                    placeholder="Enter your phone number" 
+                    type="tel" 
                     className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 bg-gray-50 hover:bg-white" 
                     required 
                     autoFocus 

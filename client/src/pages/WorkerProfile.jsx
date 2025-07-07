@@ -167,7 +167,7 @@ const WorkerProfile = () => {
                 <div>
                   <span className="text-gray-400 text-sm">Demandable Budget</span>
                   <div className="text-white font-semibold text-lg">
-                    {worker.demandableBudget ? `$${worker.demandableBudget}` : 'Not specified'}
+                    {worker.demandableBudget ? `৳${worker.demandableBudget}` : 'Not specified'}
                   </div>
                 </div>
                 <div>
@@ -198,10 +198,6 @@ const WorkerProfile = () => {
             <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
               <h3 className="text-xl font-bold text-white mb-4">Contact Information</h3>
               <div className="space-y-3">
-                <div className="flex items-center gap-3 text-gray-300">
-                  <span className="text-gray-400">Email:</span>
-                  <span className="text-white break-all">{worker.email}</span>
-                </div>
                 {worker.phone && (
                   <div className="flex items-center gap-3 text-gray-300">
                     <span className="text-gray-400">Phone:</span>
@@ -229,12 +225,6 @@ const WorkerProfile = () => {
                     📞 Call Worker
                   </a>
                 )}
-                <a
-                  href={`mailto:${worker.email}`}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition flex items-center justify-center gap-2"
-                >
-                  ✉️ Send Email
-                </a>
               </div>
             </div>
 

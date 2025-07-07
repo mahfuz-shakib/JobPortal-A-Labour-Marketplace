@@ -4,17 +4,17 @@ const jwt = require('jsonwebtoken');
 
 exports.register = async (req, res) => {
   try {
-    const { name, email, password, confirmPassword, phone, role } = req.body;
-    if (!name || !email || !password || !confirmPassword || !phone || !role) {
-      return res.status(400).json({ message: 'All required fields must be filled.' });
+    const { name, phone, password, confirmPassword, role } = req.body;
+    if (!name || !phone || !password || !confirmPassword || !role) {
+      return res.status(400).json({ message: 'All fields are required' });
     }
     if (password !== confirmPassword) {
       return res.status(400).json({ message: 'Passwords do not match.' });
     }
-    const existingUser = await User.findOne({ email });
-    if (existingUser) return res.status(400).json({ message: 'Email already exists' });
+    const existingUser = await User.findOne({ phone });
+    if (existingUser) return res.status(400).json({ message: 'Phone number already exists' });
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new User({ name, email, password: hashedPassword, phone, role });
+    const user = new User({ name, phone, password: hashedPassword, role });
     await user.save();
     res.status(201).json({ message: 'User registered successfully' });
   } catch (err) {
@@ -24,8 +24,8 @@ exports.register = async (req, res) => {
 
 exports.login = async (req, res) => {
   try {
-    const { email, password } = req.body;
-    const user = await User.findOne({ email });
+    const { phone, password } = req.body;
+    const user = await User.findOne({ phone });
     if (!user) return res.status(400).json({ message: 'Invalid credentials' });
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
@@ -35,7 +35,6 @@ exports.login = async (req, res) => {
       user: { 
         id: user._id, 
         name: user.name, 
-        email: user.email, 
         phone: user.phone, 
         role: user.role, 
         category: user.category,

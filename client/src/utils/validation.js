@@ -1,9 +1,4 @@
 // Form validation utilities
-export const validateEmail = (email) => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
-};
-
 export const validatePassword = (password) => {
   return password.length >= 6;
 };
@@ -42,9 +37,9 @@ export const validateFutureDate = (date) => {
 
 // Form validation schemas
 export const loginValidation = {
-  email: (value) => {
-    if (!validateRequired(value)) return 'Email is required';
-    if (!validateEmail(value)) return 'Please enter a valid email';
+  phone: (value) => {
+    if (!validateRequired(value)) return 'Phone is required';
+    if (!validatePhone(value)) return 'Please enter a valid Bangladeshi phone number';
     return null;
   },
   password: (value) => {
@@ -60,9 +55,9 @@ export const registerValidation = {
     if (value.length < 2) return 'Name must be at least 2 characters';
     return null;
   },
-  email: (value) => {
-    if (!validateRequired(value)) return 'Email is required';
-    if (!validateEmail(value)) return 'Please enter a valid email';
+  phone: (value) => {
+    if (!validateRequired(value)) return 'Phone is required';
+    if (!validatePhone(value)) return 'Please enter a valid Bangladeshi phone number';
     return null;
   },
   password: (value) => {

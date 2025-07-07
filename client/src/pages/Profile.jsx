@@ -14,7 +14,6 @@ const Profile = () => {
     skill: user?.skill || '',
     bio: user?.bio || '',
     profilePic: user?.profilePic || null,
-    email: user?.email || '',
     organizationType: user?.organizationType || '',
     organizationName: user?.organizationName || '',
     location: user?.location || '',
@@ -28,9 +27,6 @@ const Profile = () => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [passwordForm, setPasswordForm] = useState({ currentPassword: '', newPassword: '' });
   const [passwordMsg, setPasswordMsg] = useState('');
-  const [emailEdit, setEmailEdit] = useState(false);
-  const [emailInput, setEmailInput] = useState(user?.email || '');
-  const [deletePassword, setDeletePassword] = useState('');
   const fileInputRef = useRef();
   const navigate = useNavigate();
 
@@ -66,7 +62,6 @@ const Profile = () => {
       skill: user.skill || '',
       bio: user.bio || '',
       profilePic: user.profilePic || null,
-      email: user.email || '',
       organizationType: user.organizationType || '',
       organizationName: user.organizationName || '',
       location: user.location || '',
@@ -74,8 +69,6 @@ const Profile = () => {
     });
     setProfilePicPreview(user.profilePic || null);
     setProfilePicFile(null);
-    setEmailEdit(false);
-    setEmailInput(user.email || '');
     setPasswordForm({ currentPassword: '', newPassword: '' });
     setPasswordMsg('');
   };
@@ -104,24 +97,6 @@ const Profile = () => {
       setProfilePicFile(null);
     } catch (err) { 
       setError(err.response?.data?.message || 'Failed to update profile.'); 
-    }
-    setSaving(false);
-  };
-
-  // Email change
-  const handleEmailSave = async () => {
-    setSaving(true);
-    setError(''); setSuccess('');
-    try {
-      const res = await axios.post(createApiUrl(API_ENDPOINTS.USER_CHANGE_EMAIL), { newEmail: emailInput });
-      setUser(res.data.user);
-      localStorage.setItem('user', JSON.stringify(res.data.user));
-      setEmailEdit(false);
-      setSuccess('Email updated! Please log in again.');
-      setTimeout(() => { logout(); }, 2000);
-    } catch (err) {
-      const msg = err?.response?.data?.message || 'Failed to update email.';
-      setError(msg);
     }
     setSaving(false);
   };
@@ -238,15 +213,6 @@ const Profile = () => {
                   <input type="file" accept="image/*" ref={fileInputRef} onChange={handlePicChange} className="block" disabled={editSection !== 'personal'} />
                 </div>
               </div>
-              {/* Email (read-only, change in Account Info) */}
-              <div className="mb-4 flex items-center">
-                <label className="w-32 font-semibold text-gray-700">Email</label>
-                <input
-                  value={user.email}
-                  className="p-2 rounded border border-gray-200 bg-gray-100 flex-1 text-gray-500"
-                  disabled
-                />
-              </div>
               {editSection === 'personal' && (
                 <div className="flex gap-2 justify-end mt-4">
                   <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded" onClick={() => handleSave('personal')} disabled={saving}>Save</button>
@@ -289,14 +255,14 @@ const Profile = () => {
               </div>
               {/* Demandable Budget */}
               <div className="mb-4 flex items-center">
-                <label className="w-40 font-semibold text-gray-700">Demandable Budget</label>
+                <label className="w-40 font-semibold text-gray-700">Demandable Budget (৳)</label>
                 <input
                   name="demandableBudget"
                   value={form.demandableBudget}
                   onChange={handleChange}
                   type="number"
                   className="p-2 rounded border border-gray-300 focus:ring-2 focus:ring-blue-200 flex-1"
-                  placeholder="e.g. 1000"
+                  placeholder="e.g. 1000 (in Taka)"
                   disabled={editSection !== 'professional'}
                 />
               </div>
@@ -381,11 +347,6 @@ const Profile = () => {
               {!editSection && (
                 <button className="absolute top-6 right-6 text-blue-500 hover:text-blue-700 font-semibold" onClick={() => setEditSection('account')}>Edit</button>
               )}
-              {/* Email */}
-              <div className="mb-2">
-                <label className="block text-gray-500 mb-1 flex items-center gap-1">Email</label>
-                <input name="email" value={emailInput} onChange={e => setEmailInput(e.target.value)} className="w-full p-2 rounded bg-gray-50 text-gray-900 border border-gray-300 focus:ring-2 focus:ring-blue-200 focus:outline-none" required disabled={editSection !== 'account'} />
-              </div>
               {/* Password */}
               <div className="mb-2">
                 <label className="block text-gray-500 mb-1 flex items-center gap-1">Password</label>
@@ -394,7 +355,7 @@ const Profile = () => {
               </div>
               {editSection === 'account' && (
                 <div className="flex gap-2 mt-2 justify-end">
-                  <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded" onClick={handleEmailSave} disabled={saving}>Save</button>
+                  <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded" onClick={handlePasswordSave} disabled={saving}>Save</button>
                   <button className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded" onClick={handleCancel}>Cancel</button>
                 </div>
               )}

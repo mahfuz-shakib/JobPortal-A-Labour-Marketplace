@@ -17,7 +17,6 @@ export const API_ENDPOINTS = {
   
   // User
   USER_PROFILE: 'user/profile',
-  USER_CHANGE_EMAIL: 'user/change-email',
   USER_CHANGE_PASSWORD: 'user/change-password',
   USER_DELETE: 'user/delete',
   USER_WORKERS: 'user/workers',

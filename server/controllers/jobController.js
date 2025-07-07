@@ -48,8 +48,8 @@ exports.createJob = async (req, res) => {
 exports.getJobs = async (req, res) => {
   try {
     const jobs = await Job.find()
-      .populate('client', 'name email profilePic organizationName organizationType phone location')
-      .populate('workers', 'name email');
+      .populate('client', 'name profilePic organizationName organizationType phone location')
+      .populate('workers', 'name');
     res.json(jobs);
   } catch (err) {
     res.status(500).json({ message: 'Server error' });
@@ -59,9 +59,9 @@ exports.getJobs = async (req, res) => {
 exports.getJobById = async (req, res) => {
   try {
     const job = await Job.findById(req.params.id)
-      .populate('client', 'name email profilePic organizationName organizationType phone location')
-      .populate('workers', 'name email phone location rating')
-      .populate('workerBids.worker', 'name email phone location rating');
+      .populate('client', 'name profilePic organizationName organizationType phone location')
+      .populate('workers', 'name phone location rating')
+      .populate('workerBids.worker', 'name phone location rating');
     if (!job) return res.status(404).json({ message: 'Job not found' });
     res.json(job);
   } catch (err) {
@@ -80,8 +80,8 @@ exports.updateJob = async (req, res) => {
     }
     
     const updatedJob = await Job.findByIdAndUpdate(req.params.id, req.body, { new: true })
-      .populate('client', 'name email profilePic organizationName organizationType phone location')
-      .populate('workers', 'name email');
+      .populate('client', 'name profilePic organizationName organizationType phone location')
+      .populate('workers', 'name');
     
     res.json(updatedJob);
   } catch (err) {
@@ -122,7 +122,7 @@ exports.getAcceptedJobs = async (req, res) => {
     // First get jobs where the worker is assigned (regardless of job status)
     const jobs = await Job.find({ 
       workers: req.user.id
-    }).populate('client', 'name email phone location organizationName organizationType');
+    }).populate('client', 'name phone location organizationName organizationType');
     
     // For each job, get the worker's bid details
     const jobsWithBids = await Promise.all(jobs.map(async (job) => {
@@ -209,8 +209,8 @@ exports.updateWorkerJobStatus = async (req, res) => {
       jobId, 
       updateData, 
       { new: true }
-    ).populate('client', 'name email phone location organizationName organizationType')
-     .populate('workers', 'name email phone location rating');
+    ).populate('client', 'name profilePic organizationName organizationType phone location')
+     .populate('workers', 'name phone location rating');
     
     res.json(updatedJob);
   } catch (err) {

@@ -135,7 +135,7 @@ const JobPost = () => {
 
               <div>
                 <label className="block text-gray-300 text-sm font-medium mb-2">
-                  Budget ($) *
+                  Budget (৳) *
                 </label>
                 <input 
                   name="budget" 

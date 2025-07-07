@@ -124,7 +124,7 @@ const BidForm = ({
           <div className="mb-4 p-3 bg-gray-50 rounded-lg">
             <h3 className="font-semibold text-gray-900 mb-1">{job.title}</h3>
             <div className="text-sm text-gray-600">
-              <span className="font-medium">Budget:</span> ${job.budget} | 
+              <span className="font-medium">Budget:</span> ৳{job.budget} | 
               <span className="font-medium ml-2">Location:</span> {job.location}
             </div>
           </div>
@@ -136,13 +136,13 @@ const BidForm = ({
           <div className="grid md:grid-cols-2 gap-4">
             <div>
               <label className="block text-gray-700 font-semibold mb-1">
-                Bid Amount ($) *
+                Bid Amount (৳) *
               </label>
               <input 
                 name="amount" 
                 value={formData.amount} 
                 onChange={handleChange} 
-                placeholder="Enter your bid amount" 
+                placeholder="Enter your bid amount in Taka" 
                 type="number" 
                 min="1"
                 step="0.01"

@@ -222,7 +222,7 @@ const IncomingBids = () => {
                     <span className="text-2xl mr-2">💰</span>
                     <div>
                       <p className="text-gray-600">Budget</p>
-                      <p className="font-semibold text-gray-900">${job.budget}</p>
+                      <p className="font-semibold text-gray-900">৳{job.budget}</p>
                     </div>
                   </div>
                   <div className="flex items-center">
@@ -428,7 +428,6 @@ const IncomingBids = () => {
                                onClick={() => viewWorkerProfile(bid.worker._id)}>
                             {bid.worker?.name}
                           </h3>
-                          <p className="text-gray-600 text-sm">{bid.worker?.email}</p>
                         </div>
                       </div>
                       <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${statusConfig.color} flex items-center`}>
@@ -442,7 +441,7 @@ const IncomingBids = () => {
                         <span className="text-2xl mr-2">💰</span>
                         <div>
                           <p className="text-sm text-gray-600">Bid Amount</p>
-                          <p className="text-xl font-bold text-gray-900">${bid.amount}</p>
+                          <p className="text-xl font-bold text-gray-900">৳{bid.amount}</p>
                         </div>
                       </div>
                       <div className="text-right">

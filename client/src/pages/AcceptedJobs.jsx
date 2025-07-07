@@ -375,7 +375,7 @@ const AcceptedJobs = () => {
                           <span className="mr-4">📍 {job.location || 'Location not specified'}</span>
                         </div>
                         <div className="flex items-center text-sm text-gray-600">
-                          <span className="mr-4">💵 Budget: ${job.budget}</span>
+                          <span className="mr-4">💵 Budget: ৳{job.budget}</span>
                           <span>📂 {job.workCategory || 'Category not specified'}</span>
                         </div>
                       </div>
@@ -393,7 +393,7 @@ const AcceptedJobs = () => {
                         <span className="text-2xl mr-3">💰</span>
                         <div>
                           <p className="text-sm text-gray-600">Your Bid</p>
-                          <p className="text-xl font-bold text-gray-900">${job.bidDetails?.amount || 'N/A'}</p>
+                          <p className="text-xl font-bold text-gray-900">৳{job.bidDetails?.amount || 'N/A'}</p>
                         </div>
                       </div>
                       

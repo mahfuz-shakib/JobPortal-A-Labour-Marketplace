@@ -6,7 +6,6 @@ import registerImage from '../assets/register.jpeg';
 const Register = () => {
   const [form, setForm] = useState({
     name: '',
-    email: '',
     password: '',
     confirmPassword: '',
     phone: '',
@@ -31,8 +30,8 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!/^\+?\d{10,15}$/.test(form.phone)) {
-      setMessage('Please enter a valid phone number.');
+    if (!/^01\d{9}$/.test(form.phone)) {
+      setMessage('Please enter a valid phone number (Format: 01xxxxxxxxx)');
       return;
     }
     if (form.password !== form.confirmPassword) {
@@ -43,7 +42,7 @@ const Register = () => {
     setMessage('');
     try {
       await register(form);
-      await login(form.email, form.password);
+      await login(form.phone, form.password);
       setMessage('Registration successful! Logging you in...');
     } catch (err) {
       const msg = err?.response?.data?.message || 'Registration failed';
@@ -117,32 +116,10 @@ const Register = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1" htmlFor="email">
-                  Email Address
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
-                    </svg>
-                  </div>
-                  <input 
-                    name="email" 
-                    id="email" 
-                    value={form.email} 
-                    onChange={handleChange} 
-                    placeholder="Enter your email" 
-                    type="email" 
-                    className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 bg-gray-50 hover:bg-white" 
-                    required 
-                  />
-                </div>
-              </div>
-
-              <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1" htmlFor="phone">
                   Phone Number
                 </label>
+                <p className="text-xs text-gray-500 mb-2">Format: 01xxxxxxxxx</p>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -155,6 +132,7 @@ const Register = () => {
                     value={form.phone} 
                     onChange={handleChange} 
                     placeholder="Enter your phone number" 
+                    type="tel"
                     className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 bg-gray-50 hover:bg-white" 
                     required 
                   />
