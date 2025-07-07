@@ -11,32 +11,32 @@ import { AuthContext } from '../context/AuthContext';
 import heroPhoto from '../assets/HeroImage.jpg';
 import callToActionPhoto from '../assets/callToAction.png';
 const categories = [
-  { name: 'Electrical', icon: '⚡' },
-  { name: 'Plumbing', icon: '🔧' },
-  { name: 'Cleaning', icon: '🧹' },
-  { name: 'Masonry', icon: '🧱' },
-  { name: 'Painting', icon: '🎨' },
-  { name: 'Delivery', icon: '🚚' },
-  { name: 'Gardening', icon: '🌱' },
-  { name: 'Other', icon: '🔧' },
+  { name: 'ইলেকট্রিক্যাল', icon: '⚡' },
+  { name: 'প্লাম্বিং', icon: '🔧' },
+  { name: 'পরিচ্ছন্নতা', icon: '🧹' },
+  { name: 'রাজমিস্ত্রি', icon: '🧱' },
+  { name: 'রঙ করা', icon: '🎨' },
+  { name: 'ডেলিভারি', icon: '🚚' },
+  { name: 'বাগান পরিচর্যা', icon: '🌱' },
+  { name: 'অন্যান্য', icon: '🔧' },
 ];
 
 const faqs = [
   {
-    q: 'How do I post a job?',
-    a: 'Register as a client, go to Post Job, fill in the details, and submit. Your job will be visible to all workers.',
+    q: 'কিভাবে আমি একটি কাজ পোস্ট করব?',
+    a: 'একজন ক্লায়েন্ট হিসেবে নিবন্ধন করুন, "জব পোস্ট করুন"-এ যান, বিবরণ পূরণ করুন এবং জমা দিন। আপনার কাজটি সকল কর্মীর জন্য দৃশ্যমান হবে।',
   },
   {
-    q: 'How do I get hired as a worker?',
-    a: 'Register as a worker, complete your profile card, and start bidding on jobs that match your skills.',
+    q: 'কিভাবে আমি একজন কর্মী হিসেবে কাজ পাব?',
+    a: 'একজন কর্মী হিসেবে নিবন্ধন করুন, আপনার প্রোফাইল সম্পূর্ণ করুন এবং আপনার দক্ষতার সাথে মিলে এমন কাজের জন্য বিড করুন।',
   },
   {
-    q: 'Is WorkMatch free to use?',
-    a: 'Yes, registration and browsing are free. Some premium features may be introduced in the future.',
+    q: 'ওয়ার্কম্যাচ কি ফ্রি?',
+    a: 'হ্যাঁ, নিবন্ধন এবং ব্রাউজিং সম্পূর্ণ ফ্রি। ভবিষ্যতে কিছু প্রিমিয়াম ফিচার যুক্ত হতে পারে।',
   },
   {
-    q: 'How are payments handled?',
-    a: 'Clients and workers agree on payment terms. WorkMatch encourages secure, transparent transactions.',
+    q: 'পেমেন্ট কিভাবে হয়?',
+    a: 'ক্লায়েন্ট এবং কর্মীরা পেমেন্টের শর্ত নির্ধারণ করেন। ওয়ার্কম্যাচ নিরাপদ ও স্বচ্ছ লেনদেনকে উৎসাহিত করে।',
   },
 ];
 
@@ -49,30 +49,30 @@ const GenericHeroSection = () => (
     <div className="absolute inset-0 bg-gray-800 bg-opacity-60"></div>
     {/* Content */}
     <div className="relative z-10 w-full max-w-4xl mx-auto px-4 text-center flex flex-col items-center">
-      <span className="inline-block bg-yellow-400 text-blue-900 font-bold rounded-full px-5 py-2 mb-6 text-base shadow-lg tracking-wide animate-pulse">
-        #1 Job Bidding Platform in Bangladesh
-      </span>
-      <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold mb-4 leading-tight drop-shadow-lg">
-        Connect with <span className="text-yellow-300">Bangladesh's</span>
-        <br />
-        <span className="text-white">Best Talent</span>
-      </h1>
-      <p className="text-lg sm:text-xl text-gray-200 mb-8 max-w-2xl mx-auto leading-relaxed drop-shadow">
-        Post jobs, find skilled workers, and get quality work done—fast, easy, and secure.
-      </p>
-      <div className="flex flex-col sm:flex-row gap-4 justify-center">
-        <Link
-          to="/register"
-          className="bg-yellow-400 text-blue-900 font-bold px-8 py-4 rounded-lg shadow-lg hover:bg-yellow-300 transition text-lg"
-        >
-          Get Started
-        </Link>
-        <Link
-          to="/how-it-works"
-          className="border-2 border-white text-white font-bold px-8 py-4 rounded-lg hover:bg-white hover:text-blue-700 transition text-lg"
-        >
-          Learn More
-        </Link>
+          <span className="inline-block bg-yellow-400 text-blue-900 font-bold rounded-full px-5 py-2 mb-6 text-base shadow-lg tracking-wide animate-pulse">
+            জব পোর্টালে স্বাগতম
+          </span>
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl text-yellow-300 font-extrabold mb-4 leading-tight drop-shadow-lg">
+          বাংলাদেশের <span className="text-green-300">শ্রেষ্ঠ শ্রমজীবীদের</span>
+            <br />
+            <span className="text-white"> সাথে সংযোগ করুন</span>
+          </h1>
+          <p className="text-lg sm:text-xl text-gray-200 mb-8 max-w-2xl mx-auto leading-relaxed drop-shadow">
+                      এই প্ল্যাটফর্মটি শহর ও গ্রামের মানুষ, শ্রমিক এবং সার্ভিস কর্মীদের সহজে কাজ খুঁজে পেতে সহায়তা করে।
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link
+              to="/register"
+              className="bg-yellow-400 text-blue-900 font-bold px-8 py-4 rounded-lg shadow-lg hover:bg-yellow-300 transition text-lg"
+            >
+              শুরু করুন
+            </Link>
+            <Link
+              to="/how-it-works"
+              className="border-2 border-white text-white font-bold px-8 py-4 rounded-lg hover:bg-white hover:text-blue-700 transition text-lg"
+            >
+              আরও জানুন
+            </Link>
       </div>
     </div>
   </section>
@@ -177,8 +177,8 @@ const PublicHomePage = () => {
       {/* How It Works - Redesigned */}
       <section className="w-full max-w-7xl mx-auto py-16 px-4">
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-blue-800 mb-4">How It Works</h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">Simple steps to connect clients with skilled workers</p>
+        <h2 className="text-4xl font-bold text-blue-800 mb-4">কিভাবে কাজ করে</h2>
+        <p className="text-lg text-gray-600 max-w-2xl mx-auto">ক্লায়েন্ট ও কর্মীদের জন্য সহজ ধাপে ধাপে নির্দেশনা</p>
         </div>
 
         {/* Client Flow - First Row */}
@@ -186,7 +186,7 @@ const PublicHomePage = () => {
           <div className="text-center mb-8">
             <div className="inline-flex items-center gap-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-3 rounded-full font-semibold shadow-lg">
               <FaUserTie className="text-xl" />
-              <span className="text-lg">For Clients</span>
+              <span className="text-lg">ক্লায়েন্টদের জন্য</span>
             </div>
           </div>
           
@@ -198,7 +198,7 @@ const PublicHomePage = () => {
                   <div className="w-14 h-14 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform shadow-lg">
                     <FaUserPlus className="text-2xl text-white" />
                   </div>
-                  <h3 className="font-bold text-blue-800 text-base">Register</h3>
+                  <h3 className="font-bold text-blue-800 text-base">রেজিস্টার করুন</h3>
                 </div>
               </div>
 
@@ -213,7 +213,7 @@ const PublicHomePage = () => {
                   <div className="w-14 h-14 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform shadow-lg">
                     <FaFileAlt className="text-2xl text-white" />
                   </div>
-                  <h3 className="font-bold text-blue-800 text-base">Post Job</h3>
+                  <h3 className="font-bold text-blue-800 text-base">কাজ পোস্ট করুন</h3>
                 </div>
               </div>
 
@@ -228,7 +228,7 @@ const PublicHomePage = () => {
                   <div className="w-14 h-14 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform shadow-lg">
                     <FaSearch className="text-2xl text-white" />
                   </div>
-                  <h3 className="font-bold text-blue-800 text-base">Review Bids</h3>
+                  <h3 className="font-bold text-blue-800 text-base">বিডসমূহ দেখুন</h3>
                 </div>
               </div>
 
@@ -243,7 +243,7 @@ const PublicHomePage = () => {
                   <div className="w-14 h-14 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform shadow-lg">
                     <FaHandshake className="text-2xl text-white" />
                   </div>
-                  <h3 className="font-bold text-blue-800 text-base">Hire & Track</h3>
+                  <h3 className="font-bold text-blue-800 text-base">নিয়োগ ও ট্র্যাক করুন</h3>
                 </div>
               </div>
             </div>
@@ -255,7 +255,7 @@ const PublicHomePage = () => {
           <div className="text-center mb-8">
             <div className="inline-flex items-center gap-3 bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-3 rounded-full font-semibold shadow-lg">
               <FaUsers className="text-xl" />
-              <span className="text-lg">For Workers</span>
+              <span className="text-lg">কর্মীদের জন্য</span>
             </div>
           </div>
           
@@ -267,7 +267,7 @@ const PublicHomePage = () => {
                   <div className="w-14 h-14 bg-gradient-to-br from-teal-400 to-teal-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform shadow-lg">
                     <FaUserCheck className="text-2xl text-white" />
                   </div>
-                  <h3 className="font-bold text-green-800 text-base">Complete Profile</h3>
+                  <h3 className="font-bold text-green-800 text-base">প্রোফাইল সম্পূর্ণ করুন</h3>
                 </div>
               </div>
 
@@ -282,7 +282,7 @@ const PublicHomePage = () => {
                   <div className="w-14 h-14 bg-gradient-to-br from-indigo-400 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform shadow-lg">
                     <FaSearch className="text-2xl text-white" />
                   </div>
-                  <h3 className="font-bold text-green-800 text-base">Browse Jobs</h3>
+                  <h3 className="font-bold text-green-800 text-base">কাজ দেখুন</h3>
                 </div>
               </div>
 
@@ -297,7 +297,7 @@ const PublicHomePage = () => {
                   <div className="w-14 h-14 bg-gradient-to-br from-pink-400 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform shadow-lg">
                     <FaPaperPlane className="text-2xl text-white" />
                   </div>
-                  <h3 className="font-bold text-green-800 text-base">Submit Bids</h3>
+                  <h3 className="font-bold text-green-800 text-base">বিড করুন</h3>
                 </div>
               </div>
 
@@ -312,7 +312,7 @@ const PublicHomePage = () => {
                   <div className="w-14 h-14 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform shadow-lg">
                     <FaCheckCircle className="text-2xl text-white" />
                   </div>
-                  <h3 className="font-bold text-green-800 text-base">Get Hired</h3>
+                  <h3 className="font-bold text-green-800 text-base">নিয়োগ পান</h3>
                 </div>
               </div>
             </div>
@@ -321,8 +321,8 @@ const PublicHomePage = () => {
       </section>
       {/* Featured Jobs Section */}
       <section className="w-full max-w-6xl mx-auto py-12 px-4">
-        <h2 className="text-3xl font-bold text-blue-800 mb-8 text-center">Featured Jobs</h2>
-        {loading ? <div className="text-center text-blue-600">Loading jobs...</div> : jobs.length === 0 ? <div className="text-center text-gray-400">No jobs found.</div> : (
+        <h2 className="text-3xl font-bold text-blue-800 mb-8 text-center">বাছাইকৃত কাজসমূহ</h2>
+        {loading ? <div className="text-center text-blue-600">কাজ লোড হচ্ছে...</div> : jobs.length === 0 ? <div className="text-center text-gray-400">কোনো কাজ পাওয়া যায়নি।</div> : (
           <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 place-items-center">
             {jobs.map(job => (
               <JobCard key={job._id} job={job} onBid={handleBid} onDetails={handleJobDetails} />
@@ -330,7 +330,7 @@ const PublicHomePage = () => {
           </div>
         )}
         <div className="mt-8 flex justify-center">
-          <Link to="/jobs" className="px-6 py-3 rounded-lg bg-blue-700 text-white font-bold hover:bg-blue-800 transition shadow">See All Jobs</Link>
+          <Link to="/jobs" className="px-6 py-3 rounded-lg bg-blue-700 text-white font-bold hover:bg-blue-800 transition shadow">সব কাজ দেখুন</Link>
         </div>
         {/* Bid Form Modal */}
         <BidForm
@@ -346,8 +346,8 @@ const PublicHomePage = () => {
       </section>
       {/* Featured Workers Section */}
       <section className="w-full max-w-6xl mx-auto py-12 px-4">
-        <h2 className="text-3xl font-bold text-blue-800 mb-8 text-center">Featured Workers</h2>
-        {loading ? <div className="text-center text-blue-600">Loading...</div> : workers.length === 0 ? <div className="text-center text-gray-400">No workers found.</div> : (
+        <h2 className="text-3xl font-bold text-blue-800 mb-8 text-center">বাছাইকৃত কর্মীসমূহ</h2>
+        {loading ? <div className="text-center text-blue-600">লোড হচ্ছে...</div> : workers.length === 0 ? <div className="text-center text-gray-400">কোনো কাজ পাওয়া যায়নি।</div> : (
           <div className="w-full grid gap-6 grid-cols-1 md:grid-cols-2">
             {workers.map(worker => (
               <ProfileCard key={worker._id} worker={worker} onViewProfile={handleViewProfile} onContact={handleContact} />
@@ -355,12 +355,12 @@ const PublicHomePage = () => {
           </div>
         )}
         <div className="mt-8 flex justify-center">
-          <Link to="/workers" className="px-6 py-3 rounded-lg bg-blue-700 text-white font-bold hover:bg-blue-800 transition shadow">See All Workers</Link>
+          <Link to="/workers" className="px-6 py-3 rounded-lg bg-blue-700 text-white font-bold hover:bg-blue-800 transition shadow">সব কাজ দেখুন</Link>
         </div>
       </section>
       {/* Categories Section */}
       <section className="w-full max-w-6xl mx-auto py-12 px-4">
-        <h2 className="text-3xl font-bold text-blue-800 mb-8 text-center">Explore Categories</h2>
+        <h2 className="text-3xl font-bold text-blue-800 mb-8 text-center">ক্যাটাগরি দেখুন</h2>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
           {categories.map((cat, i) => (
             <Link to="/jobs" key={cat.name} className="bg-white rounded-xl shadow p-6 flex flex-col items-center text-center border border-blue-100 hover:bg-blue-50 transition">
@@ -372,7 +372,7 @@ const PublicHomePage = () => {
       </section>
       {/* FAQ Section */}
       <section className="w-full max-w-4xl mx-auto py-12 px-4">
-        <h2 className="text-3xl font-bold text-blue-800 mb-8 text-center">Frequently Asked Questions</h2>
+        <h2 className="text-3xl font-bold text-blue-800 mb-8 text-center">প্রায়শই জিজ্ঞাসিত প্রশ্ন</h2>
         <div className="space-y-4">
           {faqs.map((faq, i) => (
             <div key={i} className="bg-white rounded-lg shadow p-4 border border-blue-100">
@@ -406,16 +406,16 @@ const PublicHomePage = () => {
         {/* Content */}
         <div className="flex-1 flex flex-col items-center md:items-start text-center md:text-left px-4 py-4">
           <h2 className="text-3xl sm:text-4xl font-extrabold text-green-900 mb-2 drop-shadow-lg">
-            Ready to Get Started?
+          শুরু করতে প্রস্তুত?
           </h2>
           <p className="text-green-900 text-base sm:text-lg mb-4 max-w-xl drop-shadow">
-            Join WorkMatch today and connect with Bangladesh's best talent and opportunities.
+          আজই ওয়ার্কম্যাচ-এ যোগ দিন এবং বাংলাদেশের সেরা ট্যালেন্ট ও সুযোগের সাথে সংযুক্ত হন।
           </p>
           <Link
             to="/register"
             className="bg-green-600 text-white font-bold px-8 py-3 rounded-full shadow-lg hover:bg-green-700 transition text-lg"
           >
-            Sign Up Now
+            এখনই সাইন আপ করুন
           </Link>
         </div>
       </section>

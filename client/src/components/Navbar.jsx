@@ -10,12 +10,12 @@ const Navbar = () => {
 
   // Define all possible nav items
   const allNavItems = [
-    { label: 'Home', to: '/' },
-    { label: 'Jobs', to: '/jobs' },
-    { label: 'Find Workers', to: '/workers' },
-    { label: 'How It Works', to: '/how-it-works' },
-    { label: 'Post Job', to: '/post-job', role: 'client' },
-    { label: 'Profile Card', to: '/profile-card', role: 'worker' },
+    { label: 'হোম', to: '/' },
+    { label: 'চাকরি', to: '/jobs' },
+    { label: 'কর্মী খুঁজুন', to: '/workers' },
+    { label: 'কিভাবে কাজ কর', to: '/how-it-works' },
+    { label: 'চাকরি পোস্ট করুন', to: '/post-job', role: 'client' },
+    { label: 'প্রোফাইল কার্ড', to: '/profile-card', role: 'worker' },
   ];
 
   // Filter nav items based on user role
@@ -47,7 +47,7 @@ const Navbar = () => {
             </svg>
           </div>
           <span className="text-2xl font-extrabold tracking-tight bg-gradient-to-r from-blue-700 to-purple-700 bg-clip-text text-transparent group-hover:from-blue-800 group-hover:to-purple-800 transition-all duration-300">
-            WorkMatch
+          ওয়ার্কম্যাচ
           </span>
         </button>
 
@@ -73,13 +73,13 @@ const Navbar = () => {
                 to="/login" 
                 className="px-6 py-2.5 rounded-xl border-2 border-blue-600 text-blue-700 font-semibold hover:bg-blue-600 hover:text-white hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5"
               >
-                Login
+                লগইন
               </Link>
               <Link 
                 to="/register" 
                 className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold hover:from-blue-700 hover:to-purple-700 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5"
               >
-                Register
+                রেজিস্টার
               </Link>
             </>
           )}

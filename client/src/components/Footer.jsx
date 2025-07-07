@@ -8,20 +8,19 @@ const Footer = () => (
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-6">
         {/* Company Info */}
         <div>
-          <h3 className="text-xl font-bold text-white mb-3">WorkMatch</h3>
+          <h3 className="text-xl font-bold text-white mb-3">ওয়ার্কম্যাচ</h3>
           <p className="text-gray-400 text-sm leading-relaxed">
-            Bangladesh's modern job bidding platform connecting clients and skilled workers for all types of services.
-          </p>
+          বাংলাদেশের আধুনিক জব বিডিং প্ল্যাটফর্ম, যেখানে ক্লায়েন্ট ও দক্ষ কর্মীরা সকল ধরনের সেবার জন্য সংযুক্ত হন।          </p>
         </div>
 
         {/* Quick Links */}
         <div>
-          <h3 className="text-lg font-semibold text-white mb-3">Quick Links</h3>
+          <h3 className="text-lg font-semibold text-white mb-3">লিঙ্কসমূহ</h3>
           <ul className="space-y-2 text-sm">
-            <li><a href="/" className="hover:text-blue-400 transition-colors">Home</a></li>
-            <li><a href="/jobs" className="hover:text-blue-400 transition-colors">Browse Jobs</a></li>
-            <li><a href="/workers" className="hover:text-blue-400 transition-colors">Find Workers</a></li>
-            <li><a href="/how-it-works" className="hover:text-blue-400 transition-colors">How It Works</a></li>
+            <li><a href="/" className="hover:text-blue-400 transition-colors">হোম</a></li>
+            <li><a href="/jobs" className="hover:text-blue-400 transition-colors">চাকরি দেখুন</a></li>
+            <li><a href="/workers" className="hover:text-blue-400 transition-colors">কর্মী খুঁজুন</a></li>
+            <li><a href="/how-it-works" className="hover:text-blue-400 transition-colors">কিভাবে কাজ করে</a></li>
           </ul>
         </div>
 
