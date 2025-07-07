@@ -198,7 +198,7 @@ const PublicHomePage = () => {
                   <div className="w-14 h-14 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform shadow-lg">
                     <FaUserPlus className="text-2xl text-white" />
                   </div>
-                  <h3 className="font-bold text-blue-800 text-base">রেজিস্টার করুন</h3>
+                  <h3 className="font-bold text-blue-800 text-base">রেজিস্ট্রেশন করুন</h3>
                 </div>
               </div>
 
@@ -415,7 +415,7 @@ const PublicHomePage = () => {
             to="/register"
             className="bg-green-600 text-white font-bold px-8 py-3 rounded-full shadow-lg hover:bg-green-700 transition text-lg"
           >
-            এখনই সাইন আপ করুন
+            এখনই রেজিস্ট্রেশন করুন
           </Link>
         </div>
       </section>

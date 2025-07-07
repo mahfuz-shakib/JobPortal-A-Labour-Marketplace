@@ -13,7 +13,7 @@ const Navbar = () => {
     { label: 'হোম', to: '/' },
     { label: 'চাকরি', to: '/jobs' },
     { label: 'কর্মী খুঁজুন', to: '/workers' },
-    { label: 'কিভাবে কাজ কর', to: '/how-it-works' },
+    { label: 'কিভাবে কাজ করে', to: '/how-it-works' },
     { label: 'চাকরি পোস্ট করুন', to: '/post-job', role: 'client' },
     { label: 'প্রোফাইল কার্ড', to: '/profile-card', role: 'worker' },
   ];
